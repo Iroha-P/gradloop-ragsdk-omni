@@ -1,0 +1,8 @@
+# Frozen evaluation evidence is byte-addressed and must not be rewritten by autocrlf.
+data/public_eval/human_grading_v2/** -text
+data/public_eval_boundary_dev_v2/** -text
+data/public_eval_boundary_dev_v3/** -text
+data/public_eval_hard_v1/corpus.jsonl -text
+docs/superpowers/specs/2026-07-24-boundary-gate-v3-design.md -text
+reports/public/boundary_gate_dev_v2.json -text
+scripts/build_boundary_v3_dataset.py -text

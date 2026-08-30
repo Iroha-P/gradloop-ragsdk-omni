@@ -1,0 +1,6 @@
+profile: local_baseline
+rag_backend: baseline
+top_k: 5
+max_query_chars: 4096
+log_level: INFO
+

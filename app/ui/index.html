@@ -1,0 +1,1968 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>GradLoop｜研循 · RAGSDK 学习 Agent</title>
+  <link rel="icon" type="image/png" href="/ui-assets/gradloop-icon.png">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #10131d;
+      --muted: #667085;
+      --soft: #f6f8fb;
+      --paper: #ffffff;
+      --line: #e2e7ef;
+      --line-strong: #cdd5e1;
+      --blue: #2364ed;
+      --blue-soft: #eef4ff;
+      --green: #109c74;
+      --green-soft: #ebf8f3;
+      --pink: #e93672;
+      --pink-soft: #fff0f5;
+      --amber: #b7791f;
+      --amber-soft: #fff8e6;
+      --shadow: 0 18px 50px rgba(16, 24, 40, 0.08);
+      --header-height: 68px;
+      --sidebar-width: 224px;
+      --rail-width: 368px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { min-width: 320px; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Manrope", "Noto Sans SC", "Microsoft YaHei", system-ui, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button,
+    input,
+    textarea,
+    select { font: inherit; }
+
+    button { color: inherit; }
+
+    button,
+    select { cursor: pointer; }
+
+    :focus-visible {
+      outline: 3px solid rgba(35, 100, 237, 0.22);
+      outline-offset: 2px;
+    }
+
+    .skip-link {
+      position: fixed;
+      top: 8px;
+      left: 8px;
+      z-index: 100;
+      padding: 9px 13px;
+      color: #fff;
+      background: var(--ink);
+      transform: translateY(-160%);
+      transition: transform 160ms ease;
+    }
+
+    .skip-link:focus { transform: translateY(0); }
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      min-height: var(--header-height);
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) auto;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(16px);
+    }
+
+    .brand {
+      min-width: 0;
+      padding: 0 18px;
+      display: grid;
+      grid-template-columns: 38px minmax(0, 1fr);
+      align-items: center;
+      gap: 10px;
+      border-right: 1px solid var(--line);
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      display: block;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      object-fit: cover;
+    }
+
+    .brand-copy {
+      min-width: 0;
+      display: grid;
+      align-content: center;
+    }
+
+    .brand strong {
+      font-size: 16px;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .brand small {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.3;
+    }
+
+    .runtime-bar {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      padding: 0 24px;
+    }
+
+    .runtime-item {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 22px;
+      color: #344054;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .runtime-item + .runtime-item { border-left: 1px solid var(--line); }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 4px var(--green-soft);
+    }
+
+    .status-dot.waiting {
+      background: var(--amber);
+      box-shadow: 0 0 0 4px var(--amber-soft);
+    }
+
+    .privacy-label {
+      padding: 0 24px;
+      color: #475467;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .app-shell {
+      min-height: calc(100vh - var(--header-height));
+      display: grid;
+      grid-template-columns: var(--sidebar-width) minmax(0, 1fr) var(--rail-width);
+    }
+
+    .sidebar {
+      position: sticky;
+      top: var(--header-height);
+      align-self: start;
+      min-height: calc(100vh - var(--header-height));
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .sidebar-label {
+      margin: 0;
+      padding: 28px 24px 10px;
+      color: #98a2b3;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .nav-list {
+      display: grid;
+      gap: 3px;
+      padding: 0 12px;
+    }
+
+    .nav-item {
+      position: relative;
+      width: 100%;
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: center;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 7px;
+      color: #475467;
+      background: transparent;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .nav-item::before {
+      content: "";
+      position: absolute;
+      left: -12px;
+      top: 8px;
+      bottom: 8px;
+      width: 3px;
+      background: transparent;
+    }
+
+    .nav-item:hover { background: var(--soft); }
+
+    .nav-item[aria-selected="true"] {
+      color: var(--blue);
+      background: var(--blue-soft);
+    }
+
+    .nav-item[aria-selected="true"]::before { background: var(--blue); }
+
+    .nav-index {
+      color: #98a2b3;
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.06em;
+    }
+
+    .nav-item[aria-selected="true"] .nav-index { color: var(--blue); }
+
+    .sidebar-foot {
+      margin-top: auto;
+      padding: 22px 24px 28px;
+      border-top: 1px solid var(--line);
+    }
+
+    .sidebar-foot strong {
+      display: block;
+      font-size: 12px;
+    }
+
+    .sidebar-foot span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .workspace {
+      min-width: 0;
+      padding: 42px 42px 80px;
+      background:
+        linear-gradient(to bottom, rgba(246, 248, 251, 0.72), rgba(255, 255, 255, 0) 160px),
+        var(--paper);
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    .workspace-heading {
+      max-width: 840px;
+      margin-bottom: 24px;
+    }
+
+    .workspace-heading .eyebrow {
+      margin: 0 0 6px;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .workspace-heading h1,
+    .workspace-heading h2 {
+      margin: 0;
+      font-size: clamp(25px, 2.2vw, 32px);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+    }
+
+    .workspace-heading p {
+      max-width: 680px;
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .query-composer,
+    .content-surface {
+      border: 1px solid var(--line);
+      background: var(--paper);
+    }
+
+    .query-composer {
+      max-width: 880px;
+      border-radius: 8px;
+      box-shadow: 0 8px 26px rgba(16, 24, 40, 0.045);
+    }
+
+    .query-composer textarea {
+      width: 100%;
+      min-height: 108px;
+      display: block;
+      padding: 18px 20px 10px;
+      border: 0;
+      resize: vertical;
+      color: var(--ink);
+      background: transparent;
+      line-height: 1.65;
+    }
+
+    .query-composer textarea::placeholder { color: #98a2b3; }
+
+    .composer-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 10px 12px 12px 18px;
+      border-top: 1px solid var(--line);
+    }
+
+    .composer-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .composer-tools select {
+      min-height: 36px;
+      padding: 0 30px 0 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: #344054;
+      background: var(--paper);
+    }
+
+    .primary,
+    .secondary,
+    .danger {
+      min-height: 38px;
+      padding: 0 16px;
+      border-radius: 6px;
+      font-weight: 800;
+    }
+
+    .primary {
+      border: 1px solid var(--blue);
+      color: #fff;
+      background: var(--blue);
+      box-shadow: 0 6px 14px rgba(35, 100, 237, 0.16);
+    }
+
+    .primary:hover { background: #1854d8; }
+    .primary:disabled { cursor: wait; opacity: 0.68; }
+
+    .secondary {
+      border: 1px solid var(--line-strong);
+      color: #344054;
+      background: var(--paper);
+    }
+
+    .secondary:hover { border-color: #98a2b3; }
+
+    .danger {
+      border: 1px solid #fecdd3;
+      color: #be123c;
+      background: #fff1f2;
+    }
+
+    .omni-console {
+      max-width: 960px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background:
+        linear-gradient(135deg, rgba(35, 100, 237, 0.055), transparent 42%),
+        var(--paper);
+      box-shadow: 0 10px 30px rgba(16, 24, 40, 0.05);
+    }
+
+    .mode-badge {
+      display: inline-flex;
+      margin-top: 8px;
+      padding: 4px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .06em;
+    }
+
+    .mode-badge.ready { color: var(--green); background: var(--green-soft); }
+    .mode-badge.waiting { color: var(--amber); background: var(--amber-soft); }
+    .scenario-switch { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .scenario-switch > span { color: var(--muted); font-size: 12px; font-weight: 700; margin-right: 4px; }
+    .scenario-chip { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; background: var(--paper); font-size: 12px; }
+    .scenario-chip.active { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); }
+    .next-action-panel { display: grid; gap: 2px; margin-top: 14px; padding: 14px 16px; border-left: 3px solid var(--green); background: var(--green-soft); }
+    .next-action-panel span { color: var(--muted); font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+    .next-action-panel strong { font-size: 14px; }
+
+    .realtime-panel {
+      margin: 18px 18px 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--blue-soft), #fff);
+    }
+    .realtime-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .realtime-toolbar label { color: var(--muted); font-size: 12px; font-weight: 800; }
+    .realtime-toolbar select { min-height: 36px; padding: 0 30px 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fff; }
+    .realtime-state { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+    .realtime-caption { min-height: 66px; margin: 12px 0 0; padding: 12px; border-radius: 6px; background: rgba(255,255,255,.82); white-space: pre-wrap; }
+
+    .modality-bus {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      border-bottom: 1px solid var(--line);
+      background: rgba(246, 248, 251, 0.72);
+    }
+
+    .modality-stage {
+      position: relative;
+      min-height: 92px;
+      padding: 17px 18px;
+      border-right: 1px solid var(--line);
+    }
+
+    .modality-stage:last-child { border-right: 0; }
+
+    .modality-stage:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      z-index: 1;
+      top: 50%;
+      right: -9px;
+      width: 18px;
+      color: var(--blue);
+      background: #f8faff;
+      font-weight: 900;
+      text-align: center;
+      transform: translateY(-50%);
+    }
+
+    .modality-stage span {
+      display: block;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .modality-stage strong {
+      display: block;
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .modality-stage small {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .omni-grid {
+      display: grid;
+      grid-template-columns: minmax(240px, 0.78fr) minmax(320px, 1.22fr);
+      gap: 0;
+    }
+
+    .upload-zone {
+      min-height: 260px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      border-right: 1px solid var(--line);
+      color: #344054;
+      background:
+        linear-gradient(90deg, rgba(35, 100, 237, 0.04) 1px, transparent 1px),
+        linear-gradient(rgba(35, 100, 237, 0.04) 1px, transparent 1px);
+      background-size: 22px 22px;
+      text-align: center;
+    }
+
+    .upload-zone label {
+      width: 100%;
+      padding: 30px 20px;
+      border: 1px dashed #98a2b3;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.88);
+      cursor: pointer;
+    }
+
+    .upload-zone strong { display: block; font-size: 15px; }
+
+    .upload-zone span {
+      display: block;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .upload-zone input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0 0 0 0);
+    }
+
+    .omni-form { padding: 28px; }
+
+    .omni-form textarea {
+      min-height: 132px;
+      resize: vertical;
+    }
+
+    .file-summary {
+      min-height: 22px;
+      margin: 12px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .omni-result {
+      min-height: 140px;
+      margin-top: 0;
+      border-width: 1px 0 0;
+      border-radius: 0;
+      background: #fbfcfe;
+    }
+
+    .answer-area {
+      max-width: 880px;
+      margin-top: 34px;
+    }
+
+    .answer-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .answer-meta h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .answer-meta span {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .answer-copy {
+      min-height: 180px;
+      padding: 24px 4px 28px;
+      color: #344054;
+      font-size: 15px;
+      line-height: 1.9;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .answer-copy.is-empty {
+      min-height: 150px;
+      display: grid;
+      place-items: center;
+      color: #98a2b3;
+      text-align: center;
+    }
+
+    .answer-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 14px 0;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .inline-sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .source-ref {
+      padding: 4px 8px;
+      border: 1px solid var(--line);
+      border-radius: 5px;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .content-surface {
+      max-width: 880px;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 8px 26px rgba(16, 24, 40, 0.045);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .field { min-width: 0; }
+
+    .field.full { grid-column: 1 / -1; }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      color: #344054;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 6px;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    input,
+    select { min-height: 42px; padding: 0 12px; }
+
+    textarea {
+      min-height: 116px;
+      padding: 11px 12px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--blue);
+      outline: 3px solid rgba(35, 100, 237, 0.12);
+    }
+
+    .form-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .output {
+      min-height: 96px;
+      margin: 20px 0 0;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: #344054;
+      background: var(--soft);
+      font: 13px/1.7 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .notice {
+      margin-bottom: 18px;
+      padding: 12px 14px;
+      border-left: 3px solid var(--green);
+      color: #355f52;
+      background: var(--green-soft);
+      font-size: 12px;
+    }
+
+    .decision {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid #fed7aa;
+      border-radius: 7px;
+      background: #fffaf0;
+    }
+
+    .decision p {
+      margin: 0 0 10px;
+      color: #7c4a03;
+      font-size: 12px;
+    }
+
+    .right-rail {
+      min-width: 0;
+      border-left: 1px solid var(--line);
+      background: #fbfcfe;
+    }
+
+    .rail-inner {
+      position: sticky;
+      top: var(--header-height);
+      max-height: calc(100vh - var(--header-height));
+      overflow-y: auto;
+      padding: 34px 28px 48px;
+    }
+
+    .rail-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .rail-heading h2 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+    }
+
+    .rail-heading p {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .rail-count {
+      min-width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--blue);
+      background: var(--blue-soft);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .citation-list { display: grid; }
+
+    .citation-card {
+      padding: 17px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .citation-card:first-child { border-top: 0; padding-top: 0; }
+
+    .citation-top {
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      align-items: start;
+      gap: 9px;
+    }
+
+    .citation-index {
+      width: 22px;
+      height: 22px;
+      display: grid;
+      place-items: center;
+      border-radius: 5px;
+      color: #fff;
+      background: var(--blue);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .citation-title {
+      min-width: 0;
+      font-size: 13px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .citation-state {
+      color: var(--green);
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .citation-meta {
+      margin: 8px 0 0 33px;
+      color: var(--muted);
+      font-size: 10px;
+      overflow-wrap: anywhere;
+    }
+
+    .empty-evidence {
+      padding: 28px 0;
+      border-top: 1px solid var(--line);
+      color: #98a2b3;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .trace-card {
+      margin-top: 24px;
+      padding-top: 22px;
+      border-top: 1px solid var(--line-strong);
+    }
+
+    .trace-card h3 {
+      margin: 0 0 14px;
+      font-size: 13px;
+    }
+
+    .trace-step {
+      position: relative;
+      display: grid;
+      grid-template-columns: 18px minmax(0, 1fr) auto;
+      gap: 9px;
+      padding: 0 0 18px;
+    }
+
+    .trace-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      left: 6px;
+      top: 15px;
+      bottom: 2px;
+      width: 1px;
+      background: var(--line-strong);
+    }
+
+    .trace-node {
+      position: relative;
+      z-index: 1;
+      width: 13px;
+      height: 13px;
+      margin-top: 3px;
+      border: 3px solid var(--green-soft);
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .trace-copy strong {
+      display: block;
+      font-size: 11px;
+    }
+
+    .trace-copy span,
+    .trace-value {
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .utility-rail[hidden],
+    .evidence-rail[hidden] { display: none; }
+
+    .utility-block {
+      padding: 18px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .utility-block strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .utility-block p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .privacy-note {
+      margin-top: 24px;
+      padding: 14px;
+      border: 1px solid #b7ead8;
+      border-radius: 7px;
+      color: #376b5c;
+      background: var(--green-soft);
+      font-size: 10px;
+    }
+
+    [hidden] { display: none !important; }
+
+    @media (max-width: 1180px) {
+      :root { --rail-width: 320px; }
+      .workspace { padding-inline: 30px; }
+      .runtime-item { padding-inline: 12px; }
+      .runtime-item:nth-child(3) { display: none; }
+    }
+
+    @media (max-width: 960px) {
+      .app-header {
+        position: static;
+        grid-template-columns: 210px 1fr;
+      }
+
+      .brand { border-right: 1px solid var(--line); }
+      .privacy-label { display: none; }
+      .runtime-bar { justify-content: flex-start; overflow-x: auto; }
+
+      .app-shell {
+        grid-template-columns: 210px minmax(0, 1fr);
+      }
+
+      .sidebar {
+        top: 0;
+        min-height: calc(100vh - var(--header-height));
+      }
+
+      .right-rail {
+        grid-column: 2;
+        border-top: 1px solid var(--line);
+        border-left: 0;
+      }
+
+      .rail-inner {
+        position: static;
+        max-height: none;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .app-header { display: block; }
+      .brand {
+        min-height: 62px;
+        padding-inline: 18px;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .runtime-bar {
+        min-height: 48px;
+        padding: 0 12px;
+      }
+
+      .runtime-item { padding: 0 10px; }
+      .runtime-item:nth-child(2) { border-left: 0; }
+
+      .app-shell { display: block; }
+
+      .sidebar {
+        position: static;
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sidebar-label,
+      .sidebar-foot { display: none; }
+
+      .nav-list {
+        display: flex;
+        gap: 4px;
+        padding: 8px;
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+
+      .nav-list::-webkit-scrollbar { display: none; }
+
+      .nav-item {
+        min-width: max-content;
+        min-height: 40px;
+        grid-template-columns: 1fr;
+        padding: 0 12px;
+        font-size: 12px;
+      }
+
+      .nav-item::before,
+      .nav-index { display: none; }
+
+      .workspace { padding: 28px 18px 54px; }
+      .field-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .modality-bus,
+      .omni-grid { grid-template-columns: 1fr; }
+      .modality-stage { border-right: 0; border-bottom: 1px solid var(--line); }
+      .modality-stage:last-child { border-bottom: 0; }
+      .modality-stage:not(:last-child)::after { display: none; }
+      .upload-zone { min-height: 190px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .composer-actions { align-items: stretch; flex-direction: column; }
+      .composer-tools { justify-content: space-between; }
+      .primary { width: 100%; }
+      .answer-foot { align-items: flex-start; flex-direction: column; }
+      .right-rail { border-left: 0; }
+      .rail-inner { padding: 28px 18px 44px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#mainWorkspace">跳到主要内容</a>
+
+  <header class="app-header" data-deployment-mode="public_pages">
+    <div class="brand" aria-label="GradLoop 研循">
+      <img class="brand-icon" src="/ui-assets/gradloop-icon.png" alt="" width="38" height="38">
+      <span class="brand-copy">
+        <strong>GradLoop｜研循</strong>
+        <small>RAGSDK Learning Agent</small>
+      </span>
+    </div>
+    <div class="runtime-bar" aria-label="本地运行状态">
+      <div class="runtime-item">
+        <span class="status-dot waiting" id="modelDot" aria-hidden="true"></span>
+        <span id="modelState">正在检查本地模型</span>
+      </div>
+      <div class="runtime-item">
+        <span class="status-dot waiting" id="agentDot" aria-hidden="true"></span>
+        <span id="agentState">正在检查工作流</span>
+      </div>
+      <div class="runtime-item">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span>本地恢复与人工确认</span>
+      </div>
+    </div>
+    <div class="privacy-label">公开演示 · 合成语料</div>
+  </header>
+
+  <div class="notice public-mode-banner" id="publicModeNotice" hidden>
+    <strong>公开演示不连接本地知识库</strong> · <span>公开合成回放，不是实时本地后端结果</span>；MAP 在线演示与本地完整版分开运行。
+  </div>
+
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="功能导航">
+      <p class="sidebar-label">Workspace</p>
+      <nav class="nav-list" role="tablist" aria-label="学习功能">
+        <button class="nav-item" type="button" role="tab" aria-selected="true" data-tab="ask">
+          <span class="nav-index">01</span><span>资料问答</span>
+        </button>
+        <button class="nav-item" type="button" role="tab" aria-selected="false" data-tab="omni">
+          <span class="nav-index">02</span><span>全模态训练台</span>
+        </button>
+        <button class="nav-item" type="button" role="tab" aria-selected="false" data-tab="plan">
+          <span class="nav-index">03</span><span>学习计划</span>
+        </button>
+        <button class="nav-item" type="button" role="tab" aria-selected="false" data-tab="practice">
+          <span class="nav-index">04</span><span>练习批改</span>
+        </button>
+        <button class="nav-item" type="button" role="tab" aria-selected="false" data-tab="mistakes">
+          <span class="nav-index">05</span><span>错题本</span>
+        </button>
+        <button class="nav-item" type="button" role="tab" aria-selected="false" data-tab="knowledge">
+          <span class="nav-index">06</span><span>知识库覆盖</span>
+        </button>
+      </nav>
+      <div class="sidebar-foot">
+        <strong>隐私优先运行</strong>
+        <span>私人资料禁止发送至云端</span>
+      </div>
+    </aside>
+
+    <main class="workspace" id="mainWorkspace">
+      <section class="panel active" id="ask" role="tabpanel">
+        <div class="workspace-heading">
+          <p class="eyebrow">Evidence grounded Q&amp;A</p>
+          <h1>资料问答</h1>
+          <p>从本地知识库检索证据，再生成带来源、可核验的回答。</p>
+        </div>
+
+        <div class="query-composer">
+          <label for="askText" hidden>你的问题</label>
+          <textarea id="askText" placeholder="输入需要检索本地资料的问题">自我介绍如何引导面试官追问？</textarea>
+          <div class="composer-actions">
+            <div class="composer-tools">
+              <select id="askScope" aria-label="资料范围">
+                <option value="generic">通用资料</option>
+                <option value="personal">个人资料（仅本机）</option>
+                <option value="all">全部本地资料</option>
+              </select>
+              <span>最多引用 5 个片段</span>
+            </div>
+            <button class="primary" id="askButton" type="button" onclick="ask()" data-local-only data-public-fixture>检索并回答</button>
+          </div>
+        </div>
+
+        <div class="answer-area" aria-live="polite">
+          <div class="answer-meta">
+            <h3>回答</h3>
+            <span id="answerMode">等待检索</span>
+          </div>
+          <div class="answer-copy is-empty" id="askOut">提交问题后，这里将展示回答、引用来源和实际检索链路。</div>
+          <div class="answer-foot">
+            <div class="inline-sources" id="inlineSources"></div>
+            <span>回答只基于当前知识库；涉及当年政策时请核对官方通知。</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="omni" role="tabpanel">
+        <div class="workspace-heading">
+          <p class="eyebrow">MiniCPM-o on Ascend</p>
+          <h2>全模态学习与面试训练</h2>
+          <p>覆盖课程学习、技术面试和科研答辩；每次输入都经过模型理解、证据来源和训练反馈闭环。</p>
+          <span class="mode-badge waiting" id="omniMode">UNAVAILABLE · 等待模型服务</span>
+        </div>
+
+        <div class="omni-console">
+          <div class="scenario-switch" aria-label="训练场景">
+            <span>训练场景</span>
+            <button class="scenario-chip active" type="button" data-scenario="course_learning">课程学习</button>
+            <button class="scenario-chip" type="button" data-scenario="technical_interview">技术面试</button>
+            <button class="scenario-chip" type="button" data-scenario="research_defense">科研答辩</button>
+          </div>
+          <div class="modality-bus" aria-label="全模态分析流程">
+            <div class="modality-stage"><span>Input</span><strong>图像 · 音频 · 视频</strong><small>最多 4 个公开或合成文件</small></div>
+            <div class="modality-stage"><span>Model</span><strong>模型理解</strong><small>MiniCPM-o 4.5 受控推理边界</small></div>
+            <div class="modality-stage"><span>Grounding</span><strong>证据来源</strong><small>RAGSDK/BM25 显式检索</small></div>
+            <div class="modality-stage"><span>Coaching</span><strong>训练反馈</strong><small>形成可复核的表达建议</small></div>
+          </div>
+          <div class="omni-grid">
+            <div class="upload-zone">
+              <label for="omniFiles">
+                <strong>选择公开或合成材料</strong>
+                <span>PNG / JPG / WebP / WAV / MP3 / MP4<br>文件仅按请求处理，不保留原始文件名。</span>
+                <input
+                  id="omniFiles"
+                  type="file"
+                  multiple
+                  accept="image/png,image/jpeg,image/webp,audio/wav,audio/mpeg,audio/mp4,video/mp4"
+                  onchange="summarizeOmniFiles()"
+                >
+              </label>
+            </div>
+            <div class="omni-form">
+              <div class="field">
+                <label for="omniPrompt">分析任务</label>
+                <textarea id="omniPrompt">请识别材料中的关键信息，说明证据与不确定项，并给出一份适合口试训练的结构化反馈。</textarea>
+              </div>
+              <p class="file-summary" id="omniFileSummary">尚未选择材料</p>
+              <div class="notice">提交即确认材料为公开或合成内容。请勿上传成绩单、证件、私人简历、聊天记录或含个人身份信息的文件。</div>
+              <div class="form-actions">
+                <button class="primary" id="omniButton" type="button" onclick="analyzeOmni()">开始全模态分析</button>
+              </div>
+            </div>
+          </div>
+          <div class="realtime-panel" aria-label="MiniCPM-o 实时演示">
+            <div class="realtime-toolbar">
+              <span class="mode-badge ready">LIVE MAP API</span>
+              <span class="mode-badge waiting">OFFLINE FIXTURE</span>
+              <label for="realtimeMode">实时模式</label>
+              <select id="realtimeMode">
+                <option value="chat">文字</option>
+                <option value="audio">语音</option>
+                <option value="video">视觉+语音</option>
+              </select>
+              <button class="primary" id="startRealtime" type="button" onclick="startRealtime()">开始实时演示</button>
+              <button class="secondary" id="stopRealtime" type="button" onclick="stopRealtime()" disabled>停止</button>
+            </div>
+            <p class="realtime-state" id="realtimeState">实时 API 未配置时自动保持 OFFLINE FIXTURE；仅在点击开始后访问麦克风或摄像头。</p>
+            <pre class="realtime-caption" id="realtimeCaption">等待实时会话</pre>
+          </div>
+          <pre class="output omni-result" id="omniOut">等待连接 MiniCPM-o 服务</pre>
+          <div class="next-action-panel"><span>下一步行动</span><strong id="omniNextAction">完成一次分析后生成</strong></div>
+        </div>
+      </section>
+
+      <section class="panel" id="plan" role="tabpanel">
+        <div class="workspace-heading">
+          <p class="eyebrow">Adaptive planning</p>
+          <h2>学习计划</h2>
+          <p>根据目标、周期、每周投入和薄弱项生成可执行的 7/14/30 天计划。</p>
+        </div>
+        <div class="content-surface">
+          <div class="field-grid">
+            <div class="field full">
+              <label for="goal">目标</label>
+              <input id="goal" value="保研面试准备">
+            </div>
+            <div class="field">
+              <label for="days">周期</label>
+              <select id="days"><option>7</option><option>14</option><option>30</option></select>
+            </div>
+            <div class="field">
+              <label for="hours">每周可用小时</label>
+              <input id="hours" type="number" value="14" min="1" max="80">
+            </div>
+            <div class="field full">
+              <label for="weak">薄弱项（逗号分隔）</label>
+              <input id="weak" value="自我介绍,项目经历表达">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="primary" type="button" onclick="makePlan()" data-local-only data-public-fixture>生成计划</button>
+          </div>
+          <pre class="output" id="planOut">尚未生成</pre>
+        </div>
+      </section>
+
+      <section class="panel" id="practice" role="tabpanel">
+        <div class="workspace-heading">
+          <p class="eyebrow">Practice and review</p>
+          <h2>练习批改</h2>
+          <p>调用题库生成练习，用确定性基线与本地模型复核，并记录薄弱项。</p>
+        </div>
+        <div class="content-surface">
+          <div class="field-grid">
+            <div class="field">
+              <label for="topic">练习主题</label>
+              <input id="topic" value="自我介绍">
+            </div>
+            <div class="field">
+              <label for="practiceScope">题库范围</label>
+              <select id="practiceScope">
+                <option value="generic">通用题库</option>
+                <option value="personal">个人题库（仅本机）</option>
+                <option value="all">全部本地题库</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="secondary" type="button" onclick="question()" data-local-only data-public-fixture>生成一道题</button>
+          </div>
+          <pre class="output" id="questionOut">尚未出题</pre>
+          <div class="field" style="margin-top:20px">
+            <label for="answer">我的回答</label>
+            <textarea id="answer" placeholder="写下结构化回答"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="primary" type="button" onclick="grade()" data-local-only data-public-fixture>批改并记录薄弱项</button>
+          </div>
+          <pre class="output" id="gradeOut">尚未批改</pre>
+          <div class="decision" id="revisionDecision" hidden>
+            <p>系统已生成计划调整建议，应用前需要你的明确确认。</p>
+            <div class="form-actions">
+              <button class="secondary" type="button" onclick="decideRevision(true)" data-local-only data-public-fixture>确认调整</button>
+              <button class="danger" type="button" onclick="decideRevision(false)" data-local-only data-public-fixture>拒绝调整</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="mistakes" role="tabpanel">
+        <div class="workspace-heading">
+          <p class="eyebrow">Mastery loop</p>
+          <h2>错题本</h2>
+          <p>沿用同一错题记录复习进度，连续通过后再判定掌握。</p>
+        </div>
+        <div class="content-surface">
+          <div class="form-actions" style="margin-top:0">
+            <button class="secondary" type="button" onclick="mistakes()" data-local-only data-public-fixture>刷新错题</button>
+          </div>
+          <pre class="output" id="mistakesOut">尚未加载</pre>
+          <div class="field" style="margin-top:20px">
+            <label for="mistakeSelect">选择要重答的错题</label>
+            <select id="mistakeSelect"><option value="">请先刷新错题</option></select>
+          </div>
+          <div class="field" style="margin-top:16px">
+            <label for="redoAnswer">重答内容</label>
+            <textarea id="redoAnswer" placeholder="按结论、方法、证据和反思重新组织答案"></textarea>
+          </div>
+          <div class="form-actions">
+            <button class="primary" type="button" onclick="redoMistake()" data-local-only data-public-fixture>提交重答并更新掌握度</button>
+          </div>
+          <pre class="output" id="redoOut">尚未重答</pre>
+        </div>
+      </section>
+
+      <section class="panel" id="knowledge" role="tabpanel">
+        <div class="workspace-heading">
+          <p class="eyebrow">Knowledge coverage</p>
+          <h2>知识库覆盖</h2>
+          <p>检查本地知识来源、题目抽取、去重、冲突与分区状态。</p>
+        </div>
+        <div class="content-surface">
+          <div class="notice">同步只由你在本机显式执行；本页不保存凭证，也不会自动修改云端文档。</div>
+          <pre class="output" id="knowledgeOut">尚未读取覆盖报告</pre>
+        </div>
+      </section>
+    </main>
+
+    <aside class="right-rail" aria-label="证据与运行详情">
+      <div class="rail-inner">
+        <div class="evidence-rail" id="evidenceRail">
+          <div class="rail-heading">
+            <div>
+              <h2>证据检视</h2>
+              <p>引用来源与检索链路</p>
+            </div>
+            <span class="rail-count" id="citationCount">0</span>
+          </div>
+          <div class="citation-list" id="citationList">
+            <div class="empty-evidence">完成一次问答后显示命中来源。</div>
+          </div>
+          <div class="trace-card">
+            <h3>检索与生成路径</h3>
+            <div class="trace-step">
+              <span class="trace-node" aria-hidden="true"></span>
+              <div class="trace-copy"><strong id="retrievalName">本地检索</strong><span>候选片段召回</span></div>
+              <span class="trace-value" id="candidateCount">—</span>
+            </div>
+            <div class="trace-step">
+              <span class="trace-node" aria-hidden="true"></span>
+              <div class="trace-copy"><strong>证据约束</strong><span>仅保留可引用片段</span></div>
+              <span class="trace-value" id="selectedCount">—</span>
+            </div>
+            <div class="trace-step">
+              <span class="trace-node" aria-hidden="true"></span>
+              <div class="trace-copy"><strong id="generationName">等待生成</strong><span>本地答案与引用校验</span></div>
+              <span class="trace-value" id="elapsedTime">—</span>
+            </div>
+          </div>
+          <div class="privacy-note">公开演示仅使用合成语料。私人知识库、个人经历和云端文档不会进入公开仓库或演示包。</div>
+        </div>
+
+        <div class="utility-rail" id="utilityRail" hidden>
+          <div class="rail-heading">
+            <div><h2 id="utilityTitle">当前工作流</h2><p id="utilitySubtitle">本地运行说明</p></div>
+          </div>
+          <div class="utility-block"><strong>执行边界</strong><p>私人资料不向外部服务发送；全模态页仅接受公开或合成材料。</p></div>
+          <div class="utility-block"><strong>人工确认</strong><p>涉及计划调整的状态变更必须由用户确认后执行。</p></div>
+          <div class="utility-block"><strong>公开演示</strong><p>录屏与发布包固定使用公开合成语料。</p></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script type="module">
+    import { RealtimeSession } from "./realtime/session.mjs";
+    import { buildChatInput, buildDuplexInput } from "./realtime/protocol.mjs";
+    import { getPublicFixture, isPublicFixtureAction } from "./public-demo-fixtures.mjs";
+    window.GradLoopRealtime = { RealtimeSession, buildChatInput, buildDuplexInput };
+    window.GradLoopPublicFixtures = { getPublicFixture, isPublicFixtureAction };
+  </script>
+
+  <script>
+    let currentQuestion = null;
+    let pendingTrace = null;
+    let currentMistakes = [];
+    let realtimeSession = null;
+    let realtimeMedia = null;
+
+    const runtimeConfig = window.__GRADLOOP_RUNTIME_CONFIG || {};
+    const sessionKey = "gradloop_session_id";
+    const uid = () => {
+      let value = sessionStorage.getItem(sessionKey);
+      if (!value) {
+        value = "local-" + (crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(36));
+        sessionStorage.setItem(sessionKey, value);
+      }
+      return value;
+    };
+
+    const byId = (id) => document.getElementById(id);
+    const setText = (id, value) => { byId(id).textContent = String(value ?? ""); };
+    const show = (id, value) => {
+      const target = document.querySelector(id);
+      target.textContent = typeof value === "string" ? value : JSON.stringify(value, null, 2);
+    };
+
+    function isPublicPages() {
+      return runtimeConfig.deployment_mode === "public_pages";
+    }
+
+    function publicFixture(action, input = {}) {
+      if (!isPublicPages() || !window.GradLoopPublicFixtures?.isPublicFixtureAction(action)) return null;
+      return window.GradLoopPublicFixtures.getPublicFixture(action, input);
+    }
+
+    async function readJsonResponse(response) {
+      const text = await response.text();
+      if (!text.trim()) return {};
+      try { return JSON.parse(text); }
+      catch { throw new Error("本地服务返回了无法识别的内容"); }
+    }
+
+    async function api(path, options = {}) {
+      const isFormData = options.body instanceof FormData;
+      const response = await fetch(path, {
+        headers: isFormData ? {} : {"content-type": "application/json"},
+        ...options
+      });
+      const body = await readJsonResponse(response);
+      if (!response.ok) {
+        throw new Error(body.error?.message || body.detail || "请求失败");
+      }
+      return body;
+    }
+
+    function localDate(offset) {
+      const date = new Date();
+      date.setHours(12, 0, 0, 0);
+      date.setDate(date.getDate() + offset);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function setDot(id, ready) {
+      byId(id).classList.toggle("waiting", !ready);
+    }
+
+    async function loadMode() {
+      if (isPublicPages()) {
+        applyPublicPagesMode();
+        loadRealtimeConfig();
+        return;
+      }
+      try {
+        const result = await api("/ready");
+        const generation = result.generation || {};
+        const multimodal = result.multimodal || {};
+        const agent = result.agent || {};
+        const publicDemo = result.privacy?.mode === "public_demo";
+        const innovationMode = result.components?.multimodal?.backend_mode || "unavailable";
+        const modeLabel = innovationMode === "live"
+          ? "LIVE MODEL · MiniCPM-o"
+          : innovationMode === "fixture"
+          ? "OFFLINE REPLAY · 合成案例"
+          : "UNAVAILABLE · 等待模型服务";
+        setText("omniMode", modeLabel);
+        byId("omniMode").className = `mode-badge ${innovationMode === "live" ? "ready" : "waiting"}`;
+        const model = multimodal.ready
+          ? `MiniCPM-o · ${multimodal.model}`
+          : generation.ready
+          ? `本地模型 · ${generation.model}`
+          : "BM25 检索基线";
+        const workflow = agent.engine === "langgraph"
+          ? "LangGraph 工作流"
+          : "Baseline 工作流";
+        setText("modelState", model);
+        setText("agentState", workflow);
+        setDot("modelDot", Boolean(multimodal.ready || generation.ready));
+        setDot("agentDot", Boolean(agent.engine));
+        if (innovationMode === "fixture") {
+          setText("omniOut", "OFFLINE REPLAY：可运行合成案例；不会伪装成 MiniCPM-o 实时输出。\n请选择课程学习、技术面试或科研答辩场景。");
+        } else if (multimodal.ready) {
+          setText("omniOut", `服务已就绪：${multimodal.model}\n支持：${(multimodal.modalities || []).join(" / ")}`);
+        } else {
+          setText("omniOut", "全模态接口已安装，等待连接昇腾 MiniCPM-o 服务。");
+        }
+        if (publicDemo) {
+          document
+            .querySelectorAll(
+              "#askScope option:not([value='generic']), " +
+              "#practiceScope option:not([value='generic'])"
+            )
+            .forEach((option) => {
+              option.disabled = true;
+              option.hidden = true;
+            });
+        }
+      } catch (error) {
+        setText("modelState", "运行状态不可用");
+        setText("agentState", "请检查本地服务");
+        setDot("modelDot", false);
+        setDot("agentDot", false);
+      }
+      loadRealtimeConfig();
+    }
+
+    function applyPublicPagesMode() {
+      byId("publicModeNotice").hidden = false;
+      document.querySelectorAll("[data-local-only]:not([data-public-fixture])").forEach((control) => {
+        control.disabled = true;
+        control.setAttribute("aria-disabled", "true");
+        control.title = "本地完整版需在本机启动";
+      });
+      document.querySelectorAll("[data-public-fixture]").forEach((control) => {
+        control.disabled = false;
+        control.removeAttribute("aria-disabled");
+        control.title = "公开合成回放，不是实时本地后端结果";
+      });
+      setText("modelState", "MAP 在线演示 · MiniCPM-o");
+      setText("agentState", "本地完整版需在本机启动");
+      setDot("modelDot", true);
+      setDot("agentDot", false);
+      setText("omniMode", "LIVE MAP · MiniCPM-o");
+      byId("omniMode").className = "mode-badge ready";
+      setText("omniOut", "公开演示不连接本地知识库。\n其他模块可查看公开合成回放；MAP 在线演示可在全模态训练台进入。");
+      selectTab("omni");
+    }
+
+    function selectTab(tab) {
+      document.querySelectorAll(".nav-item").forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.tab === tab));
+      });
+      document.querySelectorAll(".panel").forEach((panel) => {
+        panel.classList.toggle("active", panel.id === tab);
+      });
+      byId("evidenceRail").hidden = tab !== "ask";
+      byId("utilityRail").hidden = tab === "ask";
+      const labels = {
+        omni: ["全模态边界", "仅公开或合成材料进入昇腾推理服务"],
+        plan: ["计划约束", "目标、时间与薄弱项"],
+        practice: ["批改工作流", "题库调用与双评分复核"],
+        mistakes: ["掌握度工作流", "重答、复习与连续通过"],
+        knowledge: ["知识治理", "来源、去重、冲突与分区"]
+      };
+      if (labels[tab]) {
+        setText("utilityTitle", labels[tab][0]);
+        setText("utilitySubtitle", labels[tab][1]);
+      }
+      if (tab === "knowledge") loadCoverage();
+    }
+
+    document.querySelectorAll(".nav-item").forEach((button) => {
+      button.addEventListener("click", () => selectTab(button.dataset.tab));
+    });
+
+    document.querySelectorAll(".scenario-chip").forEach((button) => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".scenario-chip").forEach((item) => item.classList.remove("active"));
+        button.classList.add("active");
+        const prompts = {
+          course_learning: "请识别材料中的概念关系，给出一个可验证的学习任务。",
+          technical_interview: "请根据材料指出技术结论、证据和一个追问。",
+          research_defense: "请结合材料指出可复现实验、风险与答辩追问。"
+        };
+        byId("omniPrompt").value = prompts[button.dataset.scenario] || prompts.course_learning;
+      });
+    });
+
+    function summarizeOmniFiles() {
+      const files = Array.from(byId("omniFiles").files || []);
+      if (!files.length) {
+        setText("omniFileSummary", "尚未选择材料");
+        return;
+      }
+      const total = files.reduce((sum, file) => sum + file.size, 0);
+      const megabytes = (total / (1024 * 1024)).toFixed(2);
+      setText("omniFileSummary", `已选择 ${files.length} 个文件 · 合计 ${megabytes} MB · 不做应用持久化`);
+    }
+
+    async function analyzeOmni() {
+      const files = Array.from(byId("omniFiles").files || []);
+      const prompt = byId("omniPrompt").value.trim();
+      const button = byId("omniButton");
+      if (!files.length) {
+        setText("omniOut", "请先选择至少一个公开或合成材料。");
+        return;
+      }
+      if (!prompt) {
+        setText("omniOut", "请先填写分析任务。");
+        return;
+      }
+      const form = new FormData();
+      form.append("prompt", prompt);
+      form.append("content_policy", "public_or_synthetic");
+      files.forEach((file) => form.append("files", file));
+      button.disabled = true;
+      button.textContent = "分析中";
+        setText("omniOut", "正在通过受控接口分析；原始文件不做应用持久化……");
+      try {
+        const result = await api("/v1/omni/analyze", {method: "POST", body: form});
+        const output = result.model_output || {};
+        const evidence = (result.evidence || [])
+          .map((item) => `${item.title || item.source_id} · ${item.chunk_id}`)
+          .join("；") || "无可用证据";
+        setText("omniOut", `${output.summary || "已完成分析"}\n\n后端：${result.backend_mode}\n模型：${result.model}\n模态：${result.modalities.join(" / ")}\n证据来源：${evidence}\n训练反馈：${result.coach_feedback}\n留存：请求级处理，不做应用持久化`);
+        setText("omniNextAction", result.next_action || "完成一次分析后生成");
+      } catch (error) {
+        setText("omniOut", `分析失败：${error.message}`);
+      } finally {
+        button.disabled = false;
+        button.textContent = "开始全模态分析";
+      }
+    }
+
+    async function loadRealtimeConfig() {
+      const start = byId("startRealtime");
+      if (isPublicPages()) {
+        const fallback = runtimeConfig.realtime || {};
+        const enabled = Boolean(fallback.enabled && fallback.proxy_url);
+        start.disabled = !enabled;
+        window.__gradloopRealtimeConfig = fallback;
+        setText("realtimeState", enabled
+          ? "LIVE MAP API 已配置；开始前不会请求麦克风或摄像头。"
+          : "OFFLINE FIXTURE：不会访问麦克风或摄像头。");
+        return;
+      }
+      try {
+        const config = await api("/v1/public-config");
+        const enabled = Boolean(config.realtime?.enabled && config.realtime?.proxy_url);
+        start.disabled = !enabled;
+        setText("realtimeState", enabled
+          ? "LIVE MAP API 已配置；开始前不会请求麦克风或摄像头。"
+          : "OFFLINE FIXTURE：实时 API 未配置，当前页面只展示合成回放。仅在点击开始后访问麦克风或摄像头。");
+        window.__gradloopRealtimeConfig = config.realtime || {};
+      } catch (_error) {
+        const fallback = window.__GRADLOOP_RUNTIME_CONFIG?.realtime;
+        const enabled = Boolean(fallback?.enabled && fallback?.proxy_url);
+        start.disabled = !enabled;
+        window.__gradloopRealtimeConfig = fallback || {};
+        setText("realtimeState", enabled
+          ? "LIVE MAP API 已配置；开始前不会请求麦克风或摄像头。"
+          : "OFFLINE FIXTURE：无法读取公开配置；不会访问麦克风或摄像头。");
+      }
+    }
+
+    async function startRealtime() {
+      const config = window.__gradloopRealtimeConfig || {};
+      if (!config.enabled || !config.proxy_url || !window.GradLoopRealtime) {
+        setText("realtimeCaption", "OFFLINE FIXTURE：请先配置受控 MAP Worker。当前不会发送任何材料。");
+        return;
+      }
+      const mode = byId("realtimeMode").value;
+      const start = byId("startRealtime");
+      start.disabled = true;
+      byId("stopRealtime").disabled = false;
+      try {
+        if (mode !== "chat") {
+          const constraints = mode === "video" ? { audio: true, video: true } : { audio: true };
+          realtimeMedia = await navigator.mediaDevices.getUserMedia(constraints);
+        }
+        const wsUrl = new URL(config.proxy_url);
+        wsUrl.searchParams.set("mode", mode);
+        realtimeSession = window.GradLoopRealtime.RealtimeSession({ socketFactory: (url) => new WebSocket(url), sessionSeconds: config.session_seconds });
+        realtimeSession.subscribe((event) => {
+          const detail = event.error ? `\n错误：${event.error}` : event.text || event.message || "";
+          setText("realtimeCaption", `状态：${event.state}${detail}`);
+        });
+        realtimeSession.connect(wsUrl.toString(), { instructions: byId("omniPrompt").value.trim() });
+        setText("realtimeState", `LIVE MAP API · ${mode} 已连接；会话到期或点击停止后释放媒体。`);
+      } catch (error) {
+        stopRealtime();
+        setText("realtimeState", `实时连接失败：${error.message || "未知错误"}`);
+      }
+    }
+
+    function stopRealtime() {
+      realtimeSession?.stop("user");
+      realtimeSession = null;
+      realtimeMedia?.getTracks?.().forEach((track) => track.stop());
+      realtimeMedia = null;
+      byId("startRealtime").disabled = !window.__gradloopRealtimeConfig?.enabled;
+      byId("stopRealtime").disabled = true;
+      setText("realtimeState", "实时会话已停止；未持久化音视频。仅在点击开始后访问麦克风或摄像头。");
+    }
+
+    function renderCitations(citations) {
+      const list = byId("citationList");
+      const inline = byId("inlineSources");
+      list.replaceChildren();
+      inline.replaceChildren();
+      setText("citationCount", citations.length);
+      if (!citations.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty-evidence";
+        empty.textContent = "当前回答没有可展示的引用来源。";
+        list.appendChild(empty);
+        return;
+      }
+      citations.forEach((citation, index) => {
+        const card = document.createElement("article");
+        card.className = "citation-card";
+        const top = document.createElement("div");
+        top.className = "citation-top";
+        const number = document.createElement("span");
+        number.className = "citation-index";
+        number.textContent = String(index + 1);
+        const title = document.createElement("span");
+        title.className = "citation-title";
+        title.textContent = citation.title || `公开来源 ${index + 1}`;
+        const state = document.createElement("span");
+        state.className = "citation-state";
+        state.textContent = "已引用";
+        top.append(number, title, state);
+        const meta = document.createElement("p");
+        meta.className = "citation-meta";
+        const details = [
+          citation.section ? `章节：${citation.section}` : "",
+          citation.page ? `页码：${citation.page}` : "",
+          citation.published_at ? `日期：${citation.published_at}` : ""
+        ].filter(Boolean);
+        meta.textContent = details.join(" · ") || "本地知识片段";
+        card.append(top, meta);
+        list.appendChild(card);
+
+        const ref = document.createElement("span");
+        ref.className = "source-ref";
+        ref.textContent = `[${index + 1}] ${citation.title || "公开来源"}`;
+        inline.appendChild(ref);
+      });
+    }
+
+    function renderTrace(result) {
+      const retrieval = result.retrieval || {};
+      const backend = String(result.backend || "local").toLowerCase();
+      setText("retrievalName", backend.includes("ragsdk") ? "RAGSDK 检索" : "BM25 检索");
+      setText("candidateCount", Number.isFinite(retrieval.candidate_count) ? `候选 ${retrieval.candidate_count}` : "—");
+      setText("selectedCount", Number.isFinite(retrieval.selected_count) ? `保留 ${retrieval.selected_count}` : "—");
+      setText(
+        "generationName",
+        result.generator_model ? `本地 ${result.generator_model}` : "确定性基线"
+      );
+      setText(
+        "elapsedTime",
+        Number.isFinite(retrieval.elapsed_ms) ? `${Math.round(retrieval.elapsed_ms)} ms` : "—"
+      );
+    }
+
+    async function ask() {
+      const button = byId("askButton");
+      const questionText = byId("askText").value.trim();
+      if (!questionText) {
+        setText("askOut", "请先输入问题。");
+        return;
+      }
+      button.disabled = true;
+      button.textContent = "正在检索";
+      byId("askOut").classList.remove("is-empty");
+      setText("askOut", "正在检索公开合成知识库并组织证据……");
+      try {
+        const result = publicFixture("ask", { question: questionText }) || await api("/v1/ask", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: uid(),
+            question: questionText,
+            top_k: 5,
+            scope: byId("askScope").value
+          })
+        });
+        setText("askOut", result.answer);
+        setText(
+          "answerMode",
+          isPublicPages()
+            ? "公开合成回放"
+            : result.generator_model
+            ? `本地模型 · ${result.generator_model}`
+            : `检索基线 · ${result.backend}`
+        );
+        renderCitations(result.citations || []);
+        renderTrace(result);
+      } catch (error) {
+        setText("askOut", error.message);
+        setText("answerMode", "执行失败");
+        renderCitations([]);
+      } finally {
+        button.disabled = false;
+        button.textContent = "检索并回答";
+      }
+    }
+
+    async function makePlan() {
+      try {
+        const dayCount = Number(byId("days").value);
+        const result = publicFixture("plan", { days: dayCount }) || await api("/v1/plans", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: uid(),
+            goal: byId("goal").value,
+            deadline: localDate(dayCount - 1),
+            weekly_hours: Number(byId("hours").value),
+            current_level: "beginner",
+            weak_tags: byId("weak").value.split(/[,，]/).map((value) => value.trim()).filter(Boolean),
+            completed_tasks: [],
+            intensity: "balanced",
+            days: dayCount
+          })
+        });
+        show("#planOut", result.tasks.map((task) =>
+          `第 ${task.day} 天 · ${task.title} · ${task.minutes} 分钟\n产出：${task.deliverable}`
+        ).join("\n\n"));
+      } catch (error) {
+        show("#planOut", error.message);
+      }
+    }
+
+    async function question() {
+      try {
+        const result = publicFixture("question", { topic: byId("topic").value }) || await api("/v1/practice/questions", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: uid(),
+            topic: byId("topic").value,
+            difficulty: "medium",
+            count: 1,
+            scope: byId("practiceScope").value
+          })
+        });
+        currentQuestion = result.questions[0]?.question_id || null;
+        show("#questionOut", result.questions[0]?.question || result.warnings.join("；"));
+      } catch (error) {
+        show("#questionOut", error.message);
+      }
+    }
+
+    async function grade() {
+      try {
+        if (!currentQuestion && !isPublicPages()) throw new Error("请先生成题目");
+        const run = publicFixture("grade", { answer: byId("answer").value }) || await api("/v1/agent/run", {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: uid(),
+            intent: "grade",
+            payload: {
+              question_id: currentQuestion,
+              answer: byId("answer").value,
+              use_llm_review: true
+            }
+          })
+        });
+        const result = run.result || {};
+        const review = result.llm_review || {};
+        pendingTrace = !isPublicPages() && run.status === "waiting_for_confirmation" ? run.trace_id : null;
+        byId("revisionDecision").hidden = !pendingTrace;
+        show("#gradeOut", {
+          工作流: run.engine,
+          状态: pendingTrace ? "等待确认计划调整" : "已完成",
+          当前节点: run.current_node,
+          下一节点: run.next_nodes,
+          步骤: run.steps,
+          已恢复: run.recovery?.resumed || false,
+          决策基线分: result.baseline_score,
+          本地模型复核状态: review.status,
+          本地模型复核分: review.score,
+          分差: review.score_delta,
+          基线维度: result.dimensions,
+          复核维度: review.dimensions,
+          缺失: review.missing_points?.length ? review.missing_points : result.missing_points,
+          改写示例: review.improved_answer || result.improved_answer,
+          下一步: review.next_action || result.next_action,
+          计划调整编号: result.revision_id,
+          说明: result.warnings
+        });
+      } catch (error) {
+        show("#gradeOut", error.message);
+      }
+    }
+
+    async function decideRevision(confirm) {
+      try {
+        if (!pendingTrace) throw new Error("当前没有待确认的计划调整");
+        const result = await api("/v1/agent/resume", {
+          method: "POST",
+          body: JSON.stringify({trace_id: pendingTrace, user_id: uid(), confirm})
+        });
+        pendingTrace = null;
+        byId("revisionDecision").hidden = true;
+        show("#gradeOut", {
+          工作流: result.engine,
+          状态: confirm ? "已确认计划调整" : "已拒绝计划调整",
+          调整结果: result.result?.revision?.status,
+          已从恢复点继续: result.recovery?.resumed || false,
+          恢复次数: result.recovery?.recovery_count || 0,
+          步骤: result.steps
+        });
+      } catch (error) {
+        show("#gradeOut", error.message);
+      }
+    }
+
+    async function mistakes() {
+      try {
+        const result = publicFixture("mistakes") || await api("/v1/mistakes?user_id=" + encodeURIComponent(uid()));
+        currentMistakes = result.mistakes || [];
+        byId("mistakeSelect").replaceChildren();
+        if (currentMistakes.length) {
+          currentMistakes.forEach((item) => {
+            const option = document.createElement("option");
+            option.value = item.mistake_id;
+            option.textContent = `${item.mastery_status} · ${item.latest_score ?? item.score} 分 · 下次复习 ${item.next_review_date}`;
+            byId("mistakeSelect").appendChild(option);
+          });
+        } else {
+          const option = document.createElement("option");
+          option.value = "";
+          option.textContent = "暂无错题";
+          byId("mistakeSelect").appendChild(option);
+        }
+        show("#mistakesOut", currentMistakes.map((item) => ({
+          错题编号: item.mistake_id,
+          状态: item.mastery_status,
+          初次得分: item.score,
+          最近得分: item.latest_score,
+          重答次数: item.redo_count,
+          连续通过: item.consecutive_passes,
+          下次复习: item.next_review_date,
+          薄弱项: item.weak_tags
+        })));
+      } catch (error) {
+        show("#mistakesOut", error.message);
+      }
+    }
+
+    async function redoMistake() {
+      try {
+        const item = currentMistakes.find((value) => value.mistake_id === byId("mistakeSelect").value);
+        if (!item) throw new Error("请先刷新并选择一条错题");
+        if (!byId("redoAnswer").value.trim()) throw new Error("请填写重答内容");
+        const result = publicFixture("grade", { answer: byId("redoAnswer").value }) || await api(`/v1/mistakes/${item.mistake_id}/redo`, {
+          method: "POST",
+          body: JSON.stringify({
+            user_id: uid(),
+            question_id: item.question_id,
+            answer: byId("redoAnswer").value,
+            use_llm_review: true
+          })
+        });
+        if (isPublicPages()) {
+          show("#redoOut", { 得分: result.result.baseline_score, 状态: "reviewing", 连续通过: 0, 重答次数: 1, 下一步: result.result.next_action, 说明: "公开合成回放，不是实时本地后端结果" });
+        } else {
+          show("#redoOut", {
+            得分: result.grade.score,
+            状态: result.mistake.mastery_status,
+            连续通过: result.mistake.consecutive_passes,
+            重答次数: result.mistake.redo_count,
+            下次复习: result.mistake.next_review_date,
+            下一步: result.next_action,
+            本地模型复核: result.grade.llm_review.status
+          });
+          await mistakes();
+        }
+      } catch (error) {
+        show("#redoOut", error.message);
+      }
+    }
+
+    async function loadCoverage() {
+      try {
+        const result = publicFixture("knowledge") || await api("/v1/knowledge/coverage");
+        if (result.status !== "ready") {
+          show("#knowledgeOut", "尚未生成本地覆盖报告。");
+          return;
+        }
+        const coverage = result.coverage;
+        const statuses = Object.entries(
+          coverage.sources.reduce((summary, source) => {
+            summary[source.status] = (summary[source.status] || 0) + 1;
+            return summary;
+          }, {})
+        ).map(([status, count]) => `${status}: ${count}`).join("；");
+        show(
+          "#knowledgeOut",
+          `来源 ${coverage.source_count} 份 · 章节 ${coverage.section_count} 个\n` +
+          `候选题 ${coverage.candidate_count} 道 · 去重后 ${coverage.canonical_count} 道\n` +
+          `重复组 ${coverage.duplicate_group_count} 个 · 冲突组 ${coverage.conflict_group_count} 个\n` +
+          `通用层 ${coverage.generic_count} 道 · 个人层 ${coverage.personal_count} 道\n` +
+          `待处理 ${coverage.unresolved_count} 项\n来源状态：${statuses}`
+        );
+      } catch (error) {
+        show("#knowledgeOut", error.message);
+      }
+    }
+
+    loadMode();
+  </script>
+</body>
+</html>

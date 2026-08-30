@@ -1,0 +1,390 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gradloop.invalid/schemas/secure-transfer-v1.json",
+  "title": "GradLoop secure one-way transfer contract",
+  "$comment": "JSON Schema is producer guidance, not a standalone security decision. Host grammar expresses canonical IPv4 shape, two-label DNS shape, legacy numeric aliases, and private suffixes. Runtime alone enforces globally routable canonical public IP literals and strict IDNA decode/re-encode round trips for xn-- labels, plus privacy scanning, deterministic sampling, digest binding, and cross-field rights/licence validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "$defs": {
+    "provenanceRecord": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "$comment": "Runtime additionally enforces canonical HTTPS escapes, globally routable canonical public IP literals, strict xn-- IDNA decode/re-encode round trips, decoded-component privacy scanning, exact licence URL pairing, and cross-field record digest binding.",
+          "required": [
+            "schema_version",
+            "sample_id",
+            "rights_class",
+            "record_sha256",
+            "canonical_url",
+            "retrieved_at",
+            "content_sha256",
+            "license_id",
+            "license_url",
+            "attribution",
+            "allowed_uses"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "transfer-provenance.v1"
+            },
+            "sample_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$",
+              "maxLength": 128
+            },
+            "rights_class": {
+              "const": "open_licensed"
+            },
+            "record_sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "maxLength": 71
+            },
+            "canonical_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://(?!(?:[^/]*\\.)?(?:internal|local|localhost|home|lan)(?:/|$))(?:(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?|0)\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?|0)|(?!(?:(?:0x[0-9a-f]+|[0-9]+)\\.)*(?:0x[0-9a-f]+|[0-9]+)(?:/|$))(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))+|\\[[0-9a-f:]+\\])(?:/(?:[^\\s?#\\\\%]|%(?!(?:0[0-9A-F]|1[0-9A-F]|25|2[D-F]|3[0-9]|4[1-9A-F]|5[0-9ACF]|6[1-9A-F]|7[0-9AEF]))[0-9A-F]{2})*)?$",
+              "maxLength": 2048
+            },
+            "retrieved_at": {
+              "type": "string",
+              "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$",
+              "maxLength": 20
+            },
+            "content_sha256": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$",
+              "maxLength": 64
+            },
+            "license_id": {
+              "enum": [
+                "CC0-1.0",
+                "PDM-1.0",
+                "CC-BY-4.0",
+                "CC-BY-SA-4.0"
+              ]
+            },
+            "license_url": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https://(?!(?:[^/]*\\.)?(?:internal|local|localhost|home|lan)(?:/|$))(?:(?:(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?|0)\\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?|0)|(?!(?:(?:0x[0-9a-f]+|[0-9]+)\\.)*(?:0x[0-9a-f]+|[0-9]+)(?:/|$))(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)(?:\\.(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?))+|\\[[0-9a-f:]+\\])(?:/(?:[^\\s?#\\\\%]|%(?!(?:0[0-9A-F]|1[0-9A-F]|25|2[D-F]|3[0-9]|4[1-9A-F]|5[0-9ACF]|6[1-9A-F]|7[0-9AEF]))[0-9A-F]{2})*)?$",
+              "maxLength": 2048
+            },
+            "attribution": {
+              "type": "string",
+              "pattern": "^\\S(?:[\\s\\S]*\\S)?$",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            "allowed_uses": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "research",
+                  "model_training",
+                  "redistribution",
+                  "adaptation"
+                ]
+              }
+            }
+          },
+          "allOf": [
+            {
+              "oneOf": [
+                {
+                  "properties": {
+                    "license_id": {
+                      "const": "CC0-1.0"
+                    },
+                    "license_url": {
+                      "const": "https://creativecommons.org/publicdomain/zero/1.0/"
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "license_id": {
+                      "const": "PDM-1.0"
+                    },
+                    "license_url": {
+                      "const": "https://creativecommons.org/publicdomain/mark/1.0/"
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "license_id": {
+                      "const": "CC-BY-4.0"
+                    },
+                    "license_url": {
+                      "const": "https://creativecommons.org/licenses/by/4.0/"
+                    }
+                  }
+                },
+                {
+                  "properties": {
+                    "license_id": {
+                      "const": "CC-BY-SA-4.0"
+                    },
+                    "license_url": {
+                      "const": "https://creativecommons.org/licenses/by-sa/4.0/"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "sample_id",
+            "rights_class",
+            "record_sha256",
+            "license_id"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "transfer-provenance.v1"
+            },
+            "sample_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$",
+              "maxLength": 128
+            },
+            "rights_class": {
+              "const": "synthetic"
+            },
+            "record_sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "maxLength": 71
+            },
+            "license_id": {
+              "const": "synthetic"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "schema_version",
+            "sample_id",
+            "rights_class",
+            "record_sha256",
+            "license_id"
+          ],
+          "properties": {
+            "schema_version": {
+              "const": "transfer-provenance.v1"
+            },
+            "sample_id": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$",
+              "maxLength": 128
+            },
+            "rights_class": {
+              "const": "user_owned_derived"
+            },
+            "record_sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$",
+              "maxLength": 71
+            },
+            "license_id": {
+              "const": "user-owned-derived"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "required": [
+    "sourceFiles",
+    "bundleMembers",
+    "recordRightsClasses",
+    "provenance",
+    "humanReview",
+    "deterministicTar",
+    "checksumScheme"
+  ],
+  "properties": {
+    "sourceFiles": {
+      "const": [
+        "train.jsonl",
+        "validation.jsonl",
+        "frozen_test.jsonl",
+        "provenance.jsonl",
+        "DATA_CARD.md",
+        "human_review.json"
+      ]
+    },
+    "bundleMembers": {
+      "const": [
+        "train.jsonl",
+        "validation.jsonl",
+        "frozen_test.jsonl",
+        "provenance.jsonl",
+        "DATA_CARD.md",
+        "scan-report.json",
+        "SHA256SUMS.json"
+      ]
+    },
+    "recordRightsClasses": {
+      "const": [
+        "user_owned_derived",
+        "open_licensed",
+        "synthetic"
+      ]
+    },
+    "provenance": {
+      "const": {
+        "schemaVersion": "transfer-provenance.v1",
+        "recordSchema": "#/$defs/provenanceRecord",
+        "requiredFieldsByRights": {
+          "open_licensed": [
+            "schema_version",
+            "sample_id",
+            "rights_class",
+            "record_sha256",
+            "canonical_url",
+            "retrieved_at",
+            "content_sha256",
+            "license_id",
+            "license_url",
+            "attribution",
+            "allowed_uses"
+          ],
+          "synthetic": [
+            "schema_version",
+            "sample_id",
+            "rights_class",
+            "record_sha256",
+            "license_id"
+          ],
+          "user_owned_derived": [
+            "schema_version",
+            "sample_id",
+            "rights_class",
+            "record_sha256",
+            "license_id"
+          ]
+        },
+        "allowedUses": [
+          "research",
+          "model_training",
+          "redistribution",
+          "adaptation"
+        ],
+        "licenseUrls": {
+          "CC0-1.0": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "PDM-1.0": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "CC-BY-4.0": "https://creativecommons.org/licenses/by/4.0/",
+          "CC-BY-SA-4.0": "https://creativecommons.org/licenses/by-sa/4.0/"
+        }
+      }
+    },
+    "humanReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "$comment": "Runtime gates are mandatory for deterministic sampling, dataset/sample digest binding, freshness, anonymous reviewer syntax, and cross-field equality; schema validation alone is insufficient.",
+      "required": [
+        "schema_version",
+        "reviewer_id",
+        "seed",
+        "sample_size",
+        "sample_ids",
+        "dataset_digest",
+        "sample_digest",
+        "reviewed_at",
+        "expires_at",
+        "blocking_findings",
+        "binding_digest"
+      ],
+      "properties": {
+        "schema_version": {
+          "const": "transfer-human-review.v1"
+        },
+        "reviewer_id": {
+          "type": "string",
+          "pattern": "^anon-reviewer-[0-9a-f]{24}$",
+          "maxLength": 38
+        },
+        "seed": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$",
+          "maxLength": 128
+        },
+        "sample_size": {
+          "type": "integer",
+          "minimum": 50
+        },
+        "sample_ids": {
+          "type": "array",
+          "minItems": 50,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9._:-]{0,127}$",
+            "maxLength": 128
+          }
+        },
+        "dataset_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "maxLength": 71
+        },
+        "sample_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "maxLength": 71
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$",
+          "maxLength": 20
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time",
+          "pattern": "^[0-9]{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12][0-9]|3[01])T(?:[01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]Z$",
+          "maxLength": 20
+        },
+        "blocking_findings": {
+          "type": "integer",
+          "const": 0
+        },
+        "binding_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-f]{64}$",
+          "maxLength": 71
+        }
+      }
+    },
+    "deterministicTar": {
+      "const": {
+        "format": "ustar",
+        "order": "bundleMembers",
+        "mtime": 0,
+        "uid": 0,
+        "gid": 0,
+        "uname": "",
+        "gname": "",
+        "mode": "0600",
+        "links": false,
+        "paxHeaders": false
+      }
+    },
+    "checksumScheme": {
+      "const": "canonical-json-self-sentinel-v1"
+    }
+  }
+}

@@ -1,0 +1,107 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Private/local data and generated indexes
+configs/private/*
+!configs/private/source-allowlist.example.json
+data/private/
+data/local/
+data/staging/
+data/remote_runs/
+checkpoints/
+indexes/
+uploads/
+exports/
+logs/
+traces/
+reports/private/
+reports/local/
+*.db
+*.sqlite
+*.sqlite3
+
+# Models and vector data
+models/
+weights/
+*.bin
+*.gguf
+*.safetensors
+*.pt
+*.pth
+*.onnx
+*.pdf
+*.doc
+*.docx
+*.ppt
+*.pptx
+*.xls
+*.xlsx
+*.odt
+*.rtf
+*.faiss
+*.index
+milvus*.db
+
+# Private user and chunk artifacts
+*chunk*.jsonl
+*user_record*.jsonl
+*user-record*.jsonl
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.test-tmp/
+.test-tmp*/
+.tmp-tests*/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.nox/
+.tox/
+.venv/
+venv/
+dist/
+/.tmp-presentation-final/
+build/
+*.egg-info/
+
+# Frontend dependencies and local build caches
+node_modules/
+.npm/
+.wrangler/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local showcase/video workspace and rendered media
+video/
+
+# Competition assets and locally rendered submission packages
+dist/competition/
+competition-local/
+tmp-ppt/
+
+# Ascend competition local outputs
+data/remote_runs/
+dist/ascend-competition-*/
+checkpoints/
+*.ckpt
+*.mindir
+
+# IDE / OS
+.worktrees/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

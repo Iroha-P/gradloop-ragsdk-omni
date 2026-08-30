@@ -1,0 +1,10 @@
+profile: competition_ascend
+data_scope: public_only
+corpus_root: data/public_eval
+report_root: reports/public/competition
+npu_count: 1
+allow_private_data: false
+allow_silent_fallback: false
+ragsdk_target: official_ascend
+multimodal_model: openbmb/MiniCPM-o-4_5
+

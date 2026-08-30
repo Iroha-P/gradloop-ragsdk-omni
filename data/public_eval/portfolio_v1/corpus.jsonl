@@ -1,0 +1,20 @@
+{"source_id":"public_synthetic","chunk_id":"portfolio_01","title":"九十秒自我介绍结构","text":"自我介绍按背景定位、证据亮点、研究匹配三段展开。控制在九十秒左右，每段只保留一项可追问事实，不复述简历目录。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_02","title":"STAR 项目复盘","text":"项目经历先交代情境与任务，再说明个人采取的关键行动，最后用可核验结果收束。团队成果必须区分个人贡献，失败部分补充反思与改进。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_03","title":"科研问题与实验设计","text":"研究方案先提出可证伪问题，再定义自变量、因变量和控制条件。实验前登记主要假设，结果分析同时报告负结果和误差来源。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_04","title":"英文口语回答","text":"英文回答使用观点、理由、例子、回扣问题的短结构。遇到陌生术语可以先释义再表达，不要背诵与问题无关的长模板。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_05","title":"政策时效核验","text":"招生规则只引用带发布日期的官方页面，并记录查询日期。新通知与旧简章冲突时，以适用对象一致且发布日期更晚的正式文件为准。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_06","title":"联系导师邮件","text":"首次联系邮件应包含研究兴趣、与导师方向的具体连接和一项代表性工作，附件只放必要材料。七天没有回复可以礼貌跟进一次，之后停止重复催促。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_07","title":"压力面试应对","text":"面对质疑先复述问题并确认假设，再给事实依据；确实不知道时明确边界并说明验证路径。不要用提高音量、虚构数据或攻击提问者来应对压力。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_08","title":"无领导小组讨论","text":"群面中先澄清目标和时间，再帮助团队建立评价标准。发言需要引用前序观点并推动决策，最后总结未决风险，不能靠持续抢话制造存在感。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_09","title":"跨专业申请说明","text":"跨专业陈述需要把原专业能力映射到目标领域的问题，并用课程、项目或阅读证明补课行动。只说兴趣浓厚而没有迁移证据不足以支撑转向。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_10","title":"研究伦理底线","text":"涉及人的研究应在收集数据前完成知情同意和必要审查。不得事后补签同意、选择性删除不利样本，也不能把署名当作资源交换。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_11","title":"数据泄漏处置","text":"发现含个人信息的文件误传后，应停止继续共享、撤销可用链接、通知负责人并记录影响范围。公开报告只能保留聚合统计，原始身份信息不得进入评测集。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_12","title":"回答引用约束","text":"回答中的每个关键事实都要能追溯到明确证据，引用标记必须对应实际使用的片段。列出未使用来源会降低引用精度，证据不足时不能用引用数量掩盖缺口。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_13","title":"来源权威等级","text":"来源优先级依次考虑正式发布机构、文件有效期和适用范围。个人经验帖可以提供线索，但不能覆盖官方文件；二手摘要与原文不一致时回到原文核对。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_14","title":"知识边界与拒答","text":"当语料没有回答所需属性，系统应指出缺失信息并拒绝给出确定结论。拒答可以建议查询渠道，但不得编造截止日期、名额、联系方式或录取概率。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_15","title":"混合检索诊断","text":"词面检索适合精确术语，向量检索补充改写召回，重排器负责调整候选顺序。比较方案时固定语料、问题和 Top-K，并分别记录召回、排序和延迟。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_16","title":"Agent 工具调用边界","text":"Agent 只有在参数完整时才调用工具，写操作必须避免重复副作用。证据检索最多重试一次；需要用户确认的计划调整在确认前保持等待状态。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_17","title":"阶段学习计划","text":"学习计划从截止日期倒排里程碑，把任务拆成可验收产物，并为薄弱项预留复盘。每周只依据已完成证据调整一次，避免因短期情绪频繁重排。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_18","title":"确定性批改量表","text":"批改量表分别检查事实、论证、结构、表达和改进建议。规则分数负责稳定决策，模型意见只能作为建议；没有人工标签时不得宣称语义评分准确。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_19","title":"冲突证据裁决","text":"证据冲突时先比较发布日期、发布主体、适用对象和原文完整性。无法确定优先级就并列呈现分歧并拒绝替用户做确定选择，同时记录待核验项。"}
+{"source_id":"public_synthetic","chunk_id":"portfolio_20","title":"工作流恢复与幂等","text":"工作流在检查点恢复后只执行未完成节点，已经成功的写操作不能重复。恢复记录仅保存必要状态和安全错误类型，不持久化原始问题或私密正文。"}

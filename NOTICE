@@ -1,0 +1,17 @@
+GradLoop RAGSDK Agent
+Copyright 2026 GradLoop RAGSDK Agent contributors
+
+This project is licensed under Apache-2.0. It contains its own source code,
+documentation, tests, and container configuration only.
+
+Huawei Ascend RAGSDK compatibility
+-----------------------------------
+This project is designed to interoperate with Huawei Ascend RAGSDK only when a
+user independently provisions a supported external RAGSDK runtime. Huawei
+Ascend RAGSDK source code is licensed under Mulan PSL v2. RAGSDK source code is
+not included in this project, is not vendored into this distribution, and is
+not relicensed by Apache-2.0.
+
+Using RAGSDK is optional and requires the user to obtain and comply with the
+applicable upstream software, license, hardware, and service requirements. The
+CPU baseline container does not include, install, or claim to validate RAGSDK.

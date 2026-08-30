@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "default_action": "deny",
+  "protected_roots": [
+    "<ABSOLUTE_PROTECTED_ROOT>"
+  ],
+  "protected_name_terms": [
+    "成绩单",
+    "身份证",
+    "护照",
+    "证明",
+    "论文"
+  ],
+  "sources": [
+    {
+      "source_id": "rights_cleared_methodology",
+      "path": "<ABSOLUTE_ALLOWLISTED_FILE_OR_DIRECTORY>",
+      "path_type": "file",
+      "rights_class": "user_authored_reviewed",
+      "permissions": {
+        "extract_local": true,
+        "local_rag": true,
+        "direct_training": false,
+        "synthetic_derivation": true,
+        "remote_upload": false
+      }
+    }
+  ],
+  "feishu": {
+    "enabled": true,
+    "space_name_env": "BAOYAN_FEISHU_SPACE_NAME",
+    "allowed_node_types": [
+      "docx"
+    ],
+    "requires_document_review": true,
+    "permissions": {
+      "extract_local": true,
+      "local_rag": true,
+      "direct_training": false,
+      "synthetic_derivation": true,
+      "remote_upload": false
+    }
+  },
+  "derived_training_policy": {
+    "allowed_material_classes": [
+      "new_user_authored_content",
+      "synthetic_generalized_examples",
+      "openly_licensed_content"
+    ],
+    "forbidden_material_classes": [
+      "raw_private_source",
+      "third_party_course_material",
+      "password_protected_reference",
+      "screenshots_or_watermarks",
+      "personal_application_story",
+      "source_locator_or_access_token"
+    ],
+    "required_gates": [
+      "pii_scan_zero",
+      "secret_scan_zero",
+      "copyright_provenance_pass",
+      "no_local_paths",
+      "manual_sample_review"
+    ]
+  }
+}

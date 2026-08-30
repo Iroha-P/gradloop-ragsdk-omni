@@ -1,0 +1,129 @@
+{
+  "report_version": "public-portfolio-report-v2",
+  "dataset_version": "public-synthetic-portfolio-v1",
+  "protocol_version": "public-portfolio-deterministic-v2",
+  "status": "completed",
+  "case_count": 108,
+  "unique_case_count": 108,
+  "group_metrics": {
+    "retrieval": {
+      "case_count": 40,
+      "status": "completed",
+      "metrics_kind": "system_measurement",
+      "metrics": {
+        "recall_at_5": 0.96875,
+        "mrr": 1.0,
+        "ndcg_at_5": 0.971969,
+        "no_answer_accuracy": 0.0
+      }
+    },
+    "citation": {
+      "case_count": 6,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_citation_recall": 1.0,
+        "deterministic_fixture_citation_precision": 1.0,
+        "deterministic_fixture_marker_validity": 1.0,
+        "deterministic_fixture_no_answer_accuracy": null,
+        "deterministic_fixture_answerable_response_rate": 1.0
+      }
+    },
+    "refusal": {
+      "case_count": 6,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_citation_recall": 0.0,
+        "deterministic_fixture_citation_precision": 0.0,
+        "deterministic_fixture_marker_validity": 0.0,
+        "deterministic_fixture_no_answer_accuracy": 1.0,
+        "deterministic_fixture_answerable_response_rate": null
+      }
+    },
+    "conflict": {
+      "case_count": 6,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_citation_recall": 1.0,
+        "deterministic_fixture_citation_precision": 1.0,
+        "deterministic_fixture_marker_validity": 1.0,
+        "deterministic_fixture_no_answer_accuracy": null,
+        "deterministic_fixture_answerable_response_rate": 1.0
+      }
+    },
+    "temporal": {
+      "case_count": 6,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_citation_recall": 1.0,
+        "deterministic_fixture_citation_precision": 1.0,
+        "deterministic_fixture_marker_validity": 1.0,
+        "deterministic_fixture_no_answer_accuracy": null,
+        "deterministic_fixture_answerable_response_rate": 1.0
+      }
+    },
+    "agent_tool": {
+      "case_count": 22,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_intent_routing_accuracy": 1.0,
+        "deterministic_fixture_tool_sequence_accuracy": 1.0,
+        "deterministic_fixture_bounded_completion_rate": 1.0,
+        "deterministic_fixture_privacy_leakage_count": 0
+      }
+    },
+    "plan": {
+      "case_count": 2,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_intent_routing_accuracy": 1.0,
+        "deterministic_fixture_tool_sequence_accuracy": 1.0,
+        "deterministic_fixture_bounded_completion_rate": 1.0,
+        "deterministic_fixture_privacy_leakage_count": 0
+      }
+    },
+    "grading": {
+      "case_count": 20,
+      "status": "completed",
+      "metrics_kind": "fixture_consistency",
+      "metrics": {
+        "deterministic_fixture_mean_absolute_error": 34.7,
+        "deterministic_fixture_within_10_accuracy": 0.05,
+        "deterministic_fixture_band_accuracy": 0.3
+      }
+    }
+  },
+  "latency_ms": {
+    "total_ms": 14.9451,
+    "retrieval_average_ms": 0.284985,
+    "answer_fixture_observation_count": 24,
+    "answer_fixture_all_calls_p50_ms": 0.00815,
+    "answer_fixture_all_calls_p95_ms": 0.012805
+  },
+  "duplicate_audit": {
+    "audit_version": "normalized-trigram-template-audit-v1",
+    "similarity_threshold": 0.72,
+    "shingle_size": 3,
+    "audited_text_count": 104,
+    "clone_pair_count": 0,
+    "max_similarity": 0.197802,
+    "passed": true
+  },
+  "privacy_scan": {
+    "scan_version": "public-asset-privacy-v1",
+    "passed": true,
+    "violation_count": 0
+  },
+  "honest_boundaries": [
+    "Only public synthetic fixtures are used; results are regression evidence, not real-user accuracy.",
+    "The retrieval result is BM25-only and is not a RAGSDK runtime result.",
+    "Citation, refusal, conflict, and temporal checks use deterministic fixtures; they do not establish semantic faithfulness.",
+    "Agent and grading groups check deterministic fixture contracts only; they do not execute the application Agent, a model, or human semantic grading."
+  ],
+  "failure_type": null
+}

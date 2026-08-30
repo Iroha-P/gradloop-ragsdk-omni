@@ -1,0 +1,13 @@
+{
+  "dataset_version": "public-synthetic-portfolio-v1",
+  "protocol_version": "public-portfolio-deterministic-v2",
+  "schema_version": "public-portfolio-schema-v2",
+  "asset_case_counts": {
+    "retrieval_cases": 40,
+    "answer_fixtures": 24,
+    "agent_cases": 24,
+    "grading_cases": 20
+  },
+  "expected_unique_case_count": 108,
+  "source_policy": "public_synthetic_only"
+}

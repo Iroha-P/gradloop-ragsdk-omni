@@ -1,0 +1,6 @@
+profile: test_fake
+rag_backend: fake
+top_k: 3
+max_query_chars: 4096
+log_level: WARNING
+

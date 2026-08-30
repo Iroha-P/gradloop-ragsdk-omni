@@ -1,0 +1,65 @@
+{
+  "report_version": "docker-cpu-baseline-validation-v1",
+  "validated_at": "2026-07-23",
+  "status": "passed",
+  "environment": {
+    "docker_server_version": "29.2.0",
+    "platform": "linux/amd64",
+    "image": "baoyan-ragsdk-agent:cpu-baseline",
+    "image_id": "sha256:c6646594bb7a5eeef3671e4f12bfae4e579dfdd8e630ce3869978805347709a2",
+    "image_size_bytes": 71715561,
+    "base_image": "python:3.11-slim",
+    "base_resolved_digest": "sha256:db3ff2e1800a8581e2c48a27c3995339d47bdf046da21c7627accd3d51053a93"
+  },
+  "container_checks": {
+    "health": "healthy",
+    "restart_count": 0,
+    "non_root_user": "app",
+    "uid": 100,
+    "loopback_only": true,
+    "published_address": "127.0.0.1:8000",
+    "state_volume_destination": "/app/runtime",
+    "state_volume_writable": true,
+    "private_data_directory_absent": true
+  },
+  "readiness": {
+    "status": "ready",
+    "backend": "baseline",
+    "indexed_document_count": 20,
+    "generation_backend": "none",
+    "agent_engine": "langgraph",
+    "checkpointer": "sqlite",
+    "recoverable": true
+  },
+  "synthetic_ask": {
+    "status_code": 200,
+    "backend": "baseline",
+    "backend_version": "bm25-v1",
+    "generation_backend": "none",
+    "llm_called": false,
+    "abstained": false,
+    "citation_count": 5,
+    "answer_character_count": 1304,
+    "trace_id_length": 32
+  },
+  "agent_stream": {
+    "status_code": 200,
+    "content_type": "text/event-stream",
+    "event_sequence": [
+      "start",
+      "node",
+      "node",
+      "tool",
+      "node",
+      "done"
+    ],
+    "trace_id_length": 32,
+    "raw_question_leaked": false
+  },
+  "honest_boundaries": [
+    "The container uses only the included synthetic public corpus.",
+    "This is a CPU BM25 and LangGraph runtime result, not a RAGSDK runtime result.",
+    "No language model or model weights are included or invoked.",
+    "No personal corpus, local account identifier, or host data directory is included."
+  ]
+}

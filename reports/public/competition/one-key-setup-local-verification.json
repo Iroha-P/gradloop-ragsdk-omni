@@ -1,0 +1,24 @@
+{
+  "schema_version": "one-key-setup-local-verification.v1",
+  "status": "local_verified",
+  "branch": "feature/minicpmo-demo-integration",
+  "commit": "fe25bd2",
+  "checks": {
+    "one_key_pytest": {"status": "passed", "passed": 12, "skipped": 0},
+    "release_safety_pytest": {"status": "passed", "passed": 63, "skipped": 1},
+    "ruff": "passed",
+    "powerShell_parse": "passed",
+    "node_browser_tests": "passed",
+    "node_worker_tests": "passed",
+    "dry_run": {"status": "passed", "external_calls": 0},
+    "public_release_scan": {"status": "passed", "findings": 0},
+    "public_release_build": {"status": "passed", "files": 165}
+  },
+  "external_deploy": "not_run",
+  "map_live": "not_run",
+  "notes": [
+    "Validation Pages output used only a placeholder proxy and was not uploaded.",
+    "MAP live chat/audio/video were not claimed.",
+    "API key was not requested, read, stored or printed."
+  ]
+}

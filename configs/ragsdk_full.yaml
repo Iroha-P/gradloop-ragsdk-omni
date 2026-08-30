@@ -1,0 +1,20 @@
+profile: ragsdk_full
+rag_backend: ragsdk
+top_k: 8
+max_query_chars: 4096
+log_level: INFO
+ragsdk:
+  runtime: linux-python311
+  storage: milvus
+  data_root: data/local/ragsdk
+  milvus_uri_env: BAOYAN_RAGSDK_MILVUS_URI
+  embedding_url_env: BAOYAN_RAGSDK_EMBEDDING_URL
+  llm_url_env: BAOYAN_RAGSDK_LLM_URL
+  dense_retrieval: true
+  retrieval_mode_env: BAOYAN_RAGSDK_RETRIEVAL_MODE
+  sparse_retrieval: true
+  fusion: ragsdk_mix_retrieve
+  reranker: tei
+  reranker_url_env: BAOYAN_RAGSDK_RERANKER_URL
+  llm: text2text
+  silent_fallback: false

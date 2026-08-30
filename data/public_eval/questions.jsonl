@@ -1,0 +1,15 @@
+{"case_id":"intro_01","question":"一分钟自我介绍应该选择哪些内容，而不是罗列所有奖项？","relevant_chunk_ids":["intro-goal"],"answerable":true,"split":"dev"}
+{"case_id":"intro_02","question":"怎样在自我介绍里设计面试官的追问方向？","relevant_chunk_ids":["intro-hook"],"answerable":true,"split":"dev"}
+{"case_id":"project_01","question":"项目经历应按照什么结构展开，并说明验证过程？","relevant_chunk_ids":["project-structure"],"answerable":true,"split":"dev"}
+{"case_id":"project_02","question":"团队项目中如何讲清楚自己的个人贡献？","relevant_chunk_ids":["project-contribution"],"answerable":true,"split":"test"}
+{"case_id":"pressure_01","question":"面试遇到完全不会的问题应该怎么处理？","relevant_chunk_ids":["pressure-unknown"],"answerable":true,"split":"test"}
+{"case_id":"pressure_02","question":"失败经历怎样回答才能体现定位问题和复盘能力？","relevant_chunk_ids":["pressure-failure"],"answerable":true,"split":"dev"}
+{"case_id":"english_01","question":"英文自我介绍怎样兼顾清晰准确和专业表达？","relevant_chunk_ids":["english-intro"],"answerable":true,"split":"dev"}
+{"case_id":"english_02","question":"用英文介绍项目时要准备哪几个部分？","relevant_chunk_ids":["english-project"],"answerable":true,"split":"test"}
+{"case_id":"plan_01","question":"七天保研面试训练如何安排限时回答和模拟复盘？","relevant_chunk_ids":["plan-seven-day"],"answerable":true,"split":"dev"}
+{"case_id":"policy_01","question":"报名截止日期和材料要求应当优先去哪里核实？","relevant_chunk_ids":["policy-verification"],"answerable":true,"split":"dev"}
+{"case_id":"remote_01","question":"线上面试开始前需要检查哪些设备和备用方案？","relevant_chunk_ids":["remote-interview"],"answerable":true,"split":"test"}
+{"case_id":"group_01","question":"群面发言怎样体现观点结构和协作能力？","relevant_chunk_ids":["group-interview"],"answerable":true,"split":"dev"}
+{"case_id":"none_01","question":"食堂今天供应哪一种水果？","relevant_chunk_ids":[],"answerable":false,"split":"test"}
+{"case_id":"none_02","question":"量子芯片现货价格是多少？","relevant_chunk_ids":[],"answerable":false,"split":"dev"}
+{"case_id":"none_03","question":"明天下午当地会不会下冰雹？","relevant_chunk_ids":[],"answerable":false,"split":"dev"}

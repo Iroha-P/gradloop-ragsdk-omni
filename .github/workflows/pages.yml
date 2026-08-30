@@ -1,0 +1,31 @@
+name: Build public Pages demo
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Build secret-free site
+        env:
+          MAP_PROXY_PUBLIC_URL: ${{ vars.MAP_PROXY_PUBLIC_URL }}
+          PROJECT_PUBLIC_URL: ${{ vars.PROJECT_PUBLIC_URL }}
+        run: |
+          python scripts/competition/build_public_site.py \
+            --output dist/competition/pages \
+            --proxy-url "$MAP_PROXY_PUBLIC_URL" \
+            --project-url "$PROJECT_PUBLIC_URL"
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/competition/pages

@@ -1,0 +1,12 @@
+{
+  "name": "gradloop-map-realtime-proxy",
+  "main": "src/index.mjs",
+  "compatibility_date": "2026-08-28",
+  "vars": {
+    "ALLOWED_ORIGINS": "https://gradloop-ragsdk-omni.pages.dev",
+    "MAP_REALTIME_URL": "wss://minicpmo45.modelbest.cn/v1/realtime",
+    "MAP_AUTH_HEADER": "Authorization",
+    "MAP_AUTH_PREFIX": "Bearer",
+    "MAP_SESSION_SECONDS": "300"
+  }
+}

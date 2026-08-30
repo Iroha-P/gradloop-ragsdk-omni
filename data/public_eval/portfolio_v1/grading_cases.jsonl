@@ -1,0 +1,20 @@
+{"case_id":"grade_intro_structure","split":"test","topic":"自我介绍组织","difficulty":"easy","answer":"先给背景定位，再用项目证据说明能力，最后回扣研究匹配。","reference_score":88,"challenge_tag":"structured_response"}
+{"case_id":"grade_star_ownership","split":"test","topic":"团队项目贡献","difficulty":"medium","answer":"我负责数据清洗与误差检查，团队指标提升后又复盘了失败样本。","reference_score":84,"challenge_tag":"ownership_evidence"}
+{"case_id":"grade_hypothesis_design","split":"test","topic":"实验假设设计","difficulty":"hard","answer":"定义自变量和因变量，设置控制组，依据预注册假设分析正负结果。","reference_score":92,"challenge_tag":"research_method"}
+{"case_id":"grade_english_example","split":"test","topic":"英文观点表达","difficulty":"medium","answer":"I state my view, explain the reason, give a brief example, and connect it back.","reference_score":86,"challenge_tag":"english_clarity"}
+{"case_id":"grade_policy_source","split":"test","topic":"招生政策核验","difficulty":"hard","answer":"只看群聊截图就认定截止时间，不检查发布主体和适用范围。","reference_score":28,"challenge_tag":"authority_failure"}
+{"case_id":"grade_email_tone","split":"test","topic":"导师邮件跟进","difficulty":"easy","answer":"等待合理周期后礼貌询问一次，并补充可核验的新进展。","reference_score":82,"challenge_tag":"professional_tone"}
+{"case_id":"grade_pressure_boundary","split":"test","topic":"压力问题回应","difficulty":"medium","answer":"这个问题我不确定；我会先核对假设，再通过官方资料验证。","reference_score":80,"challenge_tag":"honest_boundary"}
+{"case_id":"grade_group_listening","split":"test","topic":"群面协作表现","difficulty":"medium","answer":"不断打断别人并重复自己的方案，让所有讨论围绕我展开。","reference_score":24,"challenge_tag":"collaboration_failure"}
+{"case_id":"grade_cross_major_bridge","split":"test","topic":"跨专业动机","difficulty":"hard","answer":"原专业训练让我掌握统计建模，我用课程项目验证了向目标领域迁移的能力。","reference_score":90,"challenge_tag":"transfer_evidence"}
+{"case_id":"grade_ethics_consent","split":"test","topic":"受试者研究伦理","difficulty":"hard","answer":"数据已经收完再让参与者补签同意，可以节省前期时间。","reference_score":18,"challenge_tag":"ethics_violation"}
+{"case_id":"grade_leak_incident","split":"test","topic":"隐私事故处置","difficulty":"medium","answer":"立即撤销分享链接，通知负责人，记录影响范围并检查后续暴露。","reference_score":91,"challenge_tag":"incident_response"}
+{"case_id":"grade_citation_use","split":"test","topic":"证据引用质量","difficulty":"medium","answer":"每个事实都挂很多来源，看起来更可信，不必确认正文是否使用。","reference_score":32,"challenge_tag":"citation_padding"}
+{"case_id":"grade_authority_order","split":"test","topic":"来源优先级","difficulty":"easy","answer":"依据发布机构、有效期和对象判断；经验帖只用于发现线索。","reference_score":89,"challenge_tag":"source_reasoning"}
+{"case_id":"grade_abstention","split":"test","topic":"知识边界拒答","difficulty":"medium","answer":"语料没有名额信息，我不能推测数量，但可以建议查看正式通知。","reference_score":93,"challenge_tag":"safe_abstention"}
+{"case_id":"grade_retrieval_comparison","split":"test","topic":"检索实验对照","difficulty":"hard","answer":"固定语料与问题后比较召回和排序，同时记录延迟，避免更换测试条件。","reference_score":94,"challenge_tag":"controlled_evaluation"}
+{"case_id":"grade_tool_idempotency","split":"test","topic":"工具重复调用","difficulty":"hard","answer":"恢复后再次提交同一写操作最保险，重复记录以后再清理。","reference_score":20,"challenge_tag":"side_effect_risk"}
+{"case_id":"grade_plan_milestone","split":"test","topic":"学习计划拆解","difficulty":"easy","answer":"从截止日倒排里程碑，每项任务定义产物，并按完成证据复盘。","reference_score":87,"challenge_tag":"actionable_plan"}
+{"case_id":"grade_rubric_claim","split":"test","topic":"批改指标表述","difficulty":"medium","answer":"规则评分与人工评分完全一致，因此可以直接宣传真实用户准确率。","reference_score":15,"challenge_tag":"claim_overreach"}
+{"case_id":"grade_conflict_disclosure","split":"test","topic":"冲突信息呈现","difficulty":"hard","answer":"无法判断哪份证据更有效时，我会并列说明差异并记录待核验点。","reference_score":90,"challenge_tag":"uncertainty_disclosure"}
+{"case_id":"grade_checkpoint_privacy","split":"test","topic":"恢复状态隐私","difficulty":"hard","answer":"检查点只保留必要状态与安全错误类型，不保存原始问题和私密正文。","reference_score":95,"challenge_tag":"minimal_persistence"}

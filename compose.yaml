@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+    image: gradloop-ragsdk-agent:cpu-baseline
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      BAOYAN_PROFILE: local_baseline
+      BAOYAN_RAG_BACKEND: baseline
+      BAOYAN_LLM_BACKEND: none
+      BAOYAN_PUBLIC_DEMO: "true"
+      BAOYAN_DATABASE_PATH: runtime/learning.db
+      BAOYAN_AGENT_CHECKPOINT_PATH: runtime/agent_checkpoints.sqlite
+      BAOYAN_CORPUS_PATH: data/public_eval/portfolio_v1/corpus.jsonl
+      BAOYAN_GENERIC_CORPUS_PATH: data/public_eval/portfolio_v1/no-local-generic-corpus.jsonl
+      BAOYAN_PERSONAL_CORPUS_PATH: data/public_eval/portfolio_v1/no-local-personal-corpus.jsonl
+      BAOYAN_QUESTION_BANK_PATH: data/public_demo/question_bank.jsonl
+    volumes:
+      - gradloop-state:/app/runtime
+    restart: unless-stopped
+    profiles: ["cpu"]
+
+  ragsdk-note:
+    image: alpine:3.20
+    command: ["sh", "-c", "echo 'RAGSDK is an external opt-in dependency; this service is documentation only.'"]
+    profiles: ["ragsdk-external"]
+
+volumes:
+  gradloop-state:

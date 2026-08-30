@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "max_file_bytes": 52428800,
+  "allowed_extensions": [
+    ".pdf",
+    ".docx",
+    ".md",
+    ".txt"
+  ],
+  "approved_roots": [],
+  "sources": [
+    {
+      "source_id": "private-source-001"
+    },
+    {
+      "source_id": "private-source-002"
+    }
+  ]
+}
