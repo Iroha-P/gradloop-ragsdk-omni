@@ -31,8 +31,8 @@ function harness(parser = async () => ({ text: "Synthetic public evidence", meta
   class SyntheticDataTransfer {
     constructor() { this.files = []; this.items = { add: (file) => this.files.push(file) }; }
   }
-  const context = vm.createContext({ window, byId, DataTransfer: SyntheticDataTransfer, summarizeOmniFiles() {}, setText: (id, value) => { byId(id).textContent = value; }, AbortController, URL, setTimeout: () => 1, clearTimeout() {} });
-  vm.runInContext("let documentParseController = null, documentSession = null, documentTimer = null;\n" + flow, context);
+  const context = vm.createContext({ window, byId, isPublicPages: () => true, setDot() {}, DataTransfer: SyntheticDataTransfer, summarizeOmniFiles() {}, setText: (id, value) => { byId(id).textContent = value; }, AbortController, URL, setTimeout: () => 1, clearTimeout() {} });
+  vm.runInContext("let documentParseController = null, documentSession = null, documentTimer = null, realtimeSession = null;\n" + flow, context);
   byId("documentTask").value = "Explain the evidence";
   return { context, byId, inputs, sessionCount: () => sessions };
 }
@@ -120,4 +120,99 @@ test("the training overview does not claim every local input invokes a model", (
   assert.ok(!html.includes("每次输入都经过模型理解"));
   assert.match(html, /本地解析不需要模型 API/);
   assert.match(html, /模型分析按运行模式启用/);
+});
+
+test("public media analysis refuses the absent local backend before reading or uploading files", async () => {
+  const h = harness();
+  let calls = 0;
+  h.context.api = () => { calls++; throw new Error("must not request a local API"); };
+  h.context.FormData = class { constructor() { throw new Error("must not construct a file upload"); } };
+  vm.runInContext(html.slice(html.indexOf("    async function analyzeOmni("), html.indexOf("    async function loadRealtimeConfig(")), h.context);
+  h.byId("omniFiles").files = [{ name: "synthetic.png", type: "image/png", arrayBuffer() { throw new Error("must not read bytes"); } }];
+  h.byId("omniPrompt").value = "Describe this synthetic image";
+  await h.context.analyzeOmni();
+  assert.equal(calls, 0);
+  assert.match(h.byId("omniOut").textContent, /媒体文件分析需要本地后端/);
+});
+
+test("public mode rejects local API requests without making a network call", async () => {
+  const h = harness();
+  let calls = 0;
+  h.context.fetch = () => { calls++; throw new Error("must not fetch"); };
+  h.context.FormData = class {};
+  vm.runInContext(html.slice(html.indexOf("    async function api("), html.indexOf("    function localDate(")), h.context);
+  await assert.rejects(h.context.api("/v1/omni/analyze", { method: "POST" }), /公开静态页面不提供/);
+  assert.equal(calls, 0);
+});
+
+test("public startup does not advertise verified live inference", () => {
+  const startup = html.slice(html.indexOf("    function applyPublicPagesMode("), html.indexOf("    function selectTab("));
+  assert.ok(!startup.includes('setDot("modelDot", true)'));
+  assert.ok(!startup.includes('"LIVE MAP · MiniCPM-o"'));
+  assert.match(startup, /selectInputMode\("document"\)/);
+  assert.match(html, /id="mapChatConsent"/);
+  assert.ok(!html.includes("仅在点击开始后访问麦克风或摄像头"));
+});
+
+function chatHarness() {
+  const h = harness();
+  let listener;
+  let inputs = 0;
+  h.context.window.GradLoopRealtime.RealtimeSession = () => ({
+    subscribe(value) { listener = value; }, connect() {},
+    sendInput() { inputs++; }, stop() { listener({ state: "stopped" }); },
+  });
+  h.context.WebSocket = class {};
+  vm.runInContext("let realtimeMedia = null, realtimeTimer = null;\n" + html.slice(html.indexOf("    async function startRealtime("), html.indexOf("    function renderCitations(")), h.context);
+  h.byId("realtimeMode").value = "chat";
+  h.byId("mapChatText").value = "Explain this synthetic public example";
+  return { ...h, emit: (event) => listener(event), inputs: () => inputs };
+}
+
+test("MAP chat requires confirmation, sends only on ready and verifies a nonempty completed reply", async () => {
+  const h = chatHarness();
+  await h.context.startRealtime();
+  assert.equal(h.inputs(), 0);
+  h.byId("mapChatConsent").checked = true;
+  await h.context.startRealtime();
+  assert.match(h.byId("mapConnectionBadge").textContent, /连接中/);
+  h.emit({ state: "ready", type: "ready" });
+  assert.equal(h.inputs(), 1);
+  assert.ok(!h.byId("mapConnectionBadge").className.includes("ready"));
+  h.emit({ state: "responding", type: "delta", kind: "text", text: "Synthetic reply" });
+  h.emit({ state: "ready", type: "done" });
+  assert.equal(h.inputs(), 1);
+  assert.match(h.byId("mapConnectionBadge").textContent, /本次推理完成/);
+  assert.match(h.byId("realtimeCaption").textContent, /Synthetic reply/);
+});
+
+test("an empty completed MAP response is not success and unimplemented device modes do not open a session", async () => {
+  const h = chatHarness();
+  h.byId("mapChatConsent").checked = true;
+  await h.context.startRealtime();
+  h.emit({ state: "ready", type: "ready" });
+  h.emit({ state: "ready", type: "done" });
+  assert.match(h.byId("mapConnectionBadge").textContent, /未完成/);
+  assert.ok(!h.byId("mapConnectionBadge").className.includes("ready"));
+  const audio = chatHarness();
+  audio.byId("realtimeMode").value = "audio";
+  await audio.context.startRealtime();
+  assert.match(audio.byId("realtimeCaption").textContent, /尚未开放/);
+  assert.equal(audio.inputs(), 0);
+});
+
+test("whitespace-only document replies do not claim a completed analysis", async () => {
+  const h = harness();
+  let listener;
+  h.context.window.GradLoopRealtime.RealtimeSession = () => ({
+    subscribe(value) { listener = value; }, connect() {}, sendInput() {}, stop() {},
+  });
+  await h.context.parseDocuments();
+  h.byId("documentConsent").checked = true;
+  await h.context.sendDocumentText();
+  listener({ state: "ready", type: "ready" });
+  listener({ state: "responding", type: "delta", kind: "text", text: " \n " });
+  listener({ state: "ready", type: "done" });
+  assert.match(h.byId("documentOut").textContent, /没有文字结果/);
+  assert.match(h.byId("mapConnectionBadge").textContent, /未完成/);
 });
