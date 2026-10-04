@@ -2,7 +2,7 @@
 
 一键配置、确认步骤与恢复方式见 [MAP 一键配置说明](one-key-map-setup.md)。
 
-2026-10-04 新增的 [PDF / Word 文档模式](../document-mode.md)尚未发布到 Pages：Wrangler 身份检查 45 秒超时，状态为 `prepared_not_final`。下面的已发布地址仍指向上一版页面，不代表本次功能已上线。
+2026-10-04 新增的 [PDF / Word 文档模式](../document-mode.md)尚未发布到 Pages，状态为 `prepared_not_final`。Wrangler 身份检查 45 秒超时，后续版本检查确认 npx 临时包缓存不完整；不删除原缓存的独立缓存重建也在 60 秒限时内未完成，已停止等待。下面的已发布地址仍指向上一版页面，不代表本次功能已上线。Browser 运行依赖已可加载，但保存权限校验失败，浏览器实测仍未完成。
 
 ## 已发布地址
 
@@ -22,6 +22,8 @@ python -m venv .venv
 ```
 
 公开回放只使用 `data/public_eval/` 与 `data/public_demo/`，不扫描或读取本地私人资料。静态发布目录由 `scripts/competition/build_public_site.py` 生成，最终目录形如 `dist/competition/one-key-pages/final-*`。
+
+该启动器默认设置生成后端为 `none`，属于 BM25 + LangGraph 离线基线，不会自动调用模型 API。文档解析在浏览器本地完成；模型分析另需允许的代理配置与用户确认。Worker health 的 `upstream=configured` 只说明上游已配置，不证明本轮模型调用成功。
 
 ## MAP 代理配置（仅 Cloudflare 侧）
 

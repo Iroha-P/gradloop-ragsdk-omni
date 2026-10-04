@@ -429,6 +429,7 @@
       background: linear-gradient(135deg, var(--blue-soft), #fff);
     }
     .realtime-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .realtime-toolbar button[aria-pressed="true"] { border-color: var(--blue); color: var(--blue); background: var(--blue-soft); box-shadow: inset 0 0 0 1px var(--blue); }
     .realtime-toolbar label { color: var(--muted); font-size: 12px; font-weight: 800; }
     .realtime-toolbar select { min-height: 36px; padding: 0 30px 0 10px; border: 1px solid var(--line-strong); border-radius: 6px; background: #fff; }
     .realtime-state { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
@@ -1119,7 +1120,7 @@
         <div class="workspace-heading">
           <p class="eyebrow">MiniCPM-o on Ascend</p>
           <h2>全模态学习与面试训练</h2>
-          <p>覆盖课程学习、技术面试和科研答辩；每次输入都经过模型理解、证据来源和训练反馈闭环。</p>
+          <p>覆盖课程学习、技术面试和科研答辩；本地文档解析、模型分析与合成回放明确分开，是否调用模型以当前运行状态为准。</p>
           <span class="mode-badge waiting" id="omniMode">UNAVAILABLE · 等待模型服务</span>
         </div>
 
@@ -1132,7 +1133,7 @@
           </div>
           <div class="modality-bus" aria-label="全模态分析流程">
             <div class="modality-stage"><span>Input</span><strong>文档 · 图像 · 音频 · 视频</strong><small>PDF / Word 与公开或合成媒体</small></div>
-            <div class="modality-stage"><span>Model</span><strong>模型理解</strong><small>MiniCPM-o 4.5 受控推理边界</small></div>
+            <div class="modality-stage"><span>Model</span><strong>模型分析按运行模式启用</strong><small>本地解析不需要模型 API；MAP 调用需确认</small></div>
             <div class="modality-stage"><span>Grounding</span><strong>证据来源</strong><small>RAGSDK/BM25 显式检索</small></div>
             <div class="modality-stage"><span>Coaching</span><strong>训练反馈</strong><small>形成可复核的表达建议</small></div>
           </div>
@@ -1140,17 +1141,18 @@
             <button class="secondary" id="mediaModeButton" type="button" aria-pressed="true" onclick="selectInputMode('media')">媒体分析</button>
             <button class="secondary" id="documentModeButton" type="button" aria-pressed="false" onclick="selectInputMode('document')">文档模式 · PDF / Word</button>
           </div>
+          <p class="file-summary" id="inputModeStatus" role="status" style="padding:0 28px">当前：媒体模式。选择 PDF / Word 会自动切换到文档模式，先在本机解析。</p>
           <div class="omni-grid" id="mediaWorkspace">
             <div class="upload-zone">
               <label for="omniFiles">
                 <strong>选择公开或合成材料</strong>
-                <span>PNG / JPG / WebP / WAV / MP3 / MP4<br>文件仅按请求处理，不保留原始文件名。</span>
+                <span>PDF / DOC / DOCX / PNG / JPG / WebP / WAV / MP3 / MP4<br>文档自动转入本地解析；媒体与文档请分开选择。</span>
                 <input
                   id="omniFiles"
                   type="file"
                   multiple
-                  accept="image/png,image/jpeg,image/webp,audio/wav,audio/mpeg,audio/mp4,video/mp4"
-                  onchange="summarizeOmniFiles()"
+                  accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg,image/webp,audio/wav,audio/mpeg,audio/mp4,video/mp4"
+                  onchange="routeMaterialSelection()"
                 >
               </label>
             </div>
@@ -1177,6 +1179,7 @@
               </div>
               <div class="omni-form">
                 <p class="file-summary" id="documentStatus" role="status">LOCAL DOCUMENT · 选择公开或合成文档后解析。PDF 最多 50 页；正文最多 12,000 字符，不静默截断。</p>
+                <p class="notice" id="documentConnectionStatus" role="status">本地正文解析不需要模型 API。正在检查可选的 MAP 分析连接……</p>
                 <div class="field">
                   <label for="documentTask">文档分析任务</label>
                   <textarea id="documentTask" rows="3" maxlength="2000" oninput="documentTextChanged()">请总结文档中的关键知识，注明引用段落与不确定项，并给出适合学习或面试训练的结构化反馈。</textarea>
@@ -1387,9 +1390,12 @@
     import { RealtimeSession } from "./realtime/session.mjs";
     import { buildChatInput, buildDuplexInput } from "./realtime/protocol.mjs";
     import { getPublicFixture, isPublicFixtureAction } from "./public-demo-fixtures.mjs";
-    import { parseDocuments, buildDocumentPrompt } from "./documents/client.mjs";
     window.GradLoopRealtime = { RealtimeSession, buildChatInput, buildDuplexInput };
     window.GradLoopPublicFixtures = { getPublicFixture, isPublicFixtureAction };
+  </script>
+  <script type="module">
+    // Local parsing must not depend on the optional realtime module graph.
+    import { parseDocuments, buildDocumentPrompt } from "./documents/client.mjs";
     window.GradLoopDocuments = { parseDocuments, buildDocumentPrompt };
   </script>
 
@@ -1488,7 +1494,7 @@
           ? `MiniCPM-o · ${multimodal.model}`
           : generation.ready
           ? `本地模型 · ${generation.model}`
-          : "BM25 检索基线";
+          : "BM25 检索基线 · 未接模型 API";
         const workflow = agent.engine === "langgraph"
           ? "LangGraph 工作流"
           : "Baseline 工作流";
@@ -1603,10 +1609,47 @@
       byId("omniOut").hidden = documents;
       byId("mediaModeButton").setAttribute("aria-pressed", String(!documents));
       byId("documentModeButton").setAttribute("aria-pressed", String(documents));
+      setText("inputModeStatus", documents ? "当前：文档模式。选择 PDF / DOC / DOCX → 解析文档（仅本机）→ 查看正文；没有自动调用模型。" : "当前：媒体模式。选择 PDF / Word 会自动切换到文档模式，先在本机解析。");
+    }
+
+    function isDocumentMaterial(file) {
+      const mime = String(file.type || "").toLowerCase();
+      return ["application/pdf", "application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"].includes(mime) || /\.(pdf|docx?)$/i.test(String(file.name || ""));
+    }
+
+    function routeMaterialSelection() {
+      const files = Array.from(byId("omniFiles").files || []);
+      const documents = files.filter(isDocumentMaterial);
+      if (!documents.length) { summarizeOmniFiles(); return; }
+      if (documents.length !== files.length) {
+        byId("omniFiles").value = "";
+        setText("omniFileSummary", "文档与媒体混选已取消，没有读取或发送文件。");
+        setText("omniOut", "请将 PDF / Word 文档与图像、音频、视频分开选择；文档使用本地正文解析。");
+        return;
+      }
+      selectInputMode("document");
+      const task = byId("omniPrompt").value.trim();
+      if (task) byId("documentTask").value = task.slice(0, 2000);
+      try {
+        const transfer = new DataTransfer();
+        documents.forEach((file) => transfer.items.add(file));
+        byId("documentFiles").files = transfer.files;
+        documentSelectionChanged();
+        setText("documentStatus", `已将 ${documents.length} 份材料转入文档模式；点击“解析文档（仅本机）”。尚未读取或发送。`);
+      } catch (_error) {
+        documentSelectionChanged();
+        setText("documentStatus", "已切换至文档模式；浏览器不支持自动转入，请在文档框重新选择，再点击“解析文档（仅本机）”。");
+      }
+      byId("omniFiles").value = "";
     }
 
     function updateDocumentSendState() {
-      byId("documentSendButton").disabled = Boolean(documentSession) || !byId("documentConsent").checked || !byId("documentPreview").value.trim();
+      const connected = Boolean(window.__gradloopRealtimeConfig?.enabled && window.__gradloopRealtimeConfig?.proxy_url);
+      byId("documentSendButton").disabled = !connected || Boolean(documentSession) || !byId("documentConsent").checked || !byId("documentPreview").value.trim();
+      byId("documentSendButton").textContent = connected ? "发送已确认文本到 MAP" : "MAP API 未配置（本地解析可用）";
+      setText("documentConnectionStatus", connected
+        ? "本地正文解析不需要模型 API。MAP 代理已配置，尚未发送：仅在你检查、确认并点击发送后调用；不发送原文件。"
+        : "当前没有接入模型 API：PDF / Word 仍可在本机解析和预览；模型分析不可用，不会返回伪造结果。");
     }
 
     function documentTextChanged() {
@@ -1724,6 +1767,7 @@
         setText("omniOut", "请先选择至少一个公开或合成材料。");
         return;
       }
+      if (files.some(isDocumentMaterial)) { routeMaterialSelection(); return; }
       if (!prompt) {
         setText("omniOut", "请先填写分析任务。");
         return;
@@ -1758,6 +1802,7 @@
         const enabled = Boolean(fallback.enabled && fallback.proxy_url);
         start.disabled = !enabled;
         window.__gradloopRealtimeConfig = fallback;
+        updateDocumentSendState();
         setText("realtimeState", enabled
           ? "LIVE MAP API 已配置；开始前不会请求麦克风或摄像头。"
           : "OFFLINE FIXTURE：不会访问麦克风或摄像头。");
@@ -1771,11 +1816,13 @@
           ? "LIVE MAP API 已配置；开始前不会请求麦克风或摄像头。"
           : "OFFLINE FIXTURE：实时 API 未配置，当前页面只展示合成回放。仅在点击开始后访问麦克风或摄像头。");
         window.__gradloopRealtimeConfig = config.realtime || {};
+        updateDocumentSendState();
       } catch (_error) {
         const fallback = window.__GRADLOOP_RUNTIME_CONFIG?.realtime;
         const enabled = Boolean(fallback?.enabled && fallback?.proxy_url);
         start.disabled = !enabled;
         window.__gradloopRealtimeConfig = fallback || {};
+        updateDocumentSendState();
         setText("realtimeState", enabled
           ? "LIVE MAP API 已配置；开始前不会请求麦克风或摄像头。"
           : "OFFLINE FIXTURE：无法读取公开配置；不会访问麦克风或摄像头。");

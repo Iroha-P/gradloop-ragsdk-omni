@@ -171,3 +171,14 @@ def test_document_parser_route_only_serves_public_allowlisted_assets(tmp_path) -
     for asset in ("unknown.mjs", "vendor/unknown.json", "%2e%2e%2fREADME.md"):
         assert api.get(f"/documents/{asset}").status_code == 404
     assert fake is not None and fake.last_request is None
+
+
+def test_local_ui_serves_every_entrypoint_module_dependency(tmp_path) -> None:
+    api, fake = _client(tmp_path)
+    for asset in ("/realtime/session.mjs", "/realtime/protocol.mjs", "/public-demo-fixtures.mjs"):
+        response = api.get(asset)
+        assert response.status_code == 200, asset
+        assert "javascript" in response.headers["content-type"]
+    for asset in ("/realtime/unknown.mjs", "/realtime/%2e%2e%2fREADME.md"):
+        assert api.get(asset).status_code == 404
+    assert fake is not None and fake.last_request is None

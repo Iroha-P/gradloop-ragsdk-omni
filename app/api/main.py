@@ -189,7 +189,7 @@ def create_app(
         page = project_root() / "app" / "ui" / "index.html"
         if not page.is_file():
             raise HTTPException(status_code=404, detail="UI is not installed")
-        return HTMLResponse(page.read_text(encoding="utf-8"))
+        return HTMLResponse(page.read_text(encoding="utf-8"), headers={"Cache-Control": "no-store"})
 
     @application.get("/ui-assets/gradloop-icon.png", response_class=FileResponse, include_in_schema=False)
     def project_icon() -> FileResponse:
@@ -212,6 +212,22 @@ def create_app(
             raise HTTPException(status_code=404, detail="Document asset is not installed")
         media_type = "text/javascript" if path.suffix == ".mjs" else "application/json" if path.suffix == ".json" else "text/plain"
         return FileResponse(path, media_type=media_type)
+
+    @application.get("/realtime/{asset_name}", response_class=FileResponse, include_in_schema=False)
+    def realtime_browser_asset(asset_name: str) -> FileResponse:
+        if asset_name not in {"session.mjs", "protocol.mjs", "audio.mjs"}:
+            raise HTTPException(status_code=404, detail="Realtime asset is not installed")
+        path = project_root() / "app/ui/realtime" / asset_name
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Realtime asset is not installed")
+        return FileResponse(path, media_type="text/javascript")
+
+    @application.get("/public-demo-fixtures.mjs", response_class=FileResponse, include_in_schema=False)
+    def public_browser_fixtures() -> FileResponse:
+        path = project_root() / "app/ui/public-demo-fixtures.mjs"
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Public fixture asset is not installed")
+        return FileResponse(path, media_type="text/javascript")
 
     @application.get("/health", tags=["system"])
     def health() -> dict:

@@ -11,7 +11,7 @@ const flow = html.slice(html.indexOf("    function selectInputMode("), html.inde
 function harness(parser = async () => ({ text: "Synthetic public evidence", metadata: [{ kind: "pdf", pages: 1, characters: 25 }] })) {
   const nodes = new Map();
   const byId = (id) => {
-    if (!nodes.has(id)) nodes.set(id, { value: "", checked: false, disabled: false, files: [], setAttribute() {} });
+    if (!nodes.has(id)) nodes.set(id, { value: "", checked: false, disabled: false, files: [], attributes: {}, setAttribute(name, value) { this.attributes[name] = value; } });
     return nodes.get(id);
   };
   let sessions = 0;
@@ -28,7 +28,10 @@ function harness(parser = async () => ({ text: "Synthetic public evidence", meta
       },
     },
   };
-  const context = vm.createContext({ window, byId, setText: (id, value) => { byId(id).textContent = value; }, AbortController, URL, setTimeout: () => 1, clearTimeout() {} });
+  class SyntheticDataTransfer {
+    constructor() { this.files = []; this.items = { add: (file) => this.files.push(file) }; }
+  }
+  const context = vm.createContext({ window, byId, DataTransfer: SyntheticDataTransfer, summarizeOmniFiles() {}, setText: (id, value) => { byId(id).textContent = value; }, AbortController, URL, setTimeout: () => 1, clearTimeout() {} });
   vm.runInContext("let documentParseController = null, documentSession = null, documentTimer = null;\n" + flow, context);
   byId("documentTask").value = "Explain the evidence";
   return { context, byId, inputs, sessionCount: () => sessions };
@@ -68,4 +71,53 @@ test("changing files cancels parsing and ignores its late result", async () => {
   assert.equal(h.byId("documentPreview").value, "");
   assert.equal(h.byId("documentParseButton").disabled, false);
   assert.equal(h.sessionCount(), 0);
+});
+
+test("the material chooser accepts documents and automatically routes them to local parsing", () => {
+  const media = html.slice(html.indexOf('id="mediaWorkspace"'), html.indexOf('id="documentWorkspace"'));
+  assert.match(media, /accept="[^\"]*\.pdf[^\"]*\.docx/);
+  assert.match(media, /onchange="routeMaterialSelection\(\)"/);
+  for (const [name, type] of [["synthetic.pdf", "application/pdf"], ["synthetic.doc", "application/msword"], ["synthetic.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"]]) {
+    const h = harness();
+    h.byId("omniFiles").files = [{ name, type, size: 12 }];
+    h.context.routeMaterialSelection();
+    assert.equal(h.byId("mediaWorkspace").hidden, true);
+    assert.equal(h.byId("documentWorkspace").hidden, false);
+    assert.equal(h.byId("documentFiles").files.length, 1);
+    assert.equal(h.byId("documentModeButton").attributes["aria-pressed"], "true");
+    assert.match(h.byId("documentStatus").textContent, /解析文档/);
+    assert.equal(h.sessionCount(), 0);
+  }
+});
+
+test("mixed document and media selection is rejected without sending files", () => {
+  const h = harness();
+  h.byId("omniFiles").files = [{ name: "synthetic.pdf", type: "application/pdf" }, { name: "synthetic.png", type: "image/png" }];
+  h.context.routeMaterialSelection();
+  assert.match(h.byId("omniOut").textContent, /分开选择/);
+  assert.equal(h.byId("omniFiles").value, "");
+  assert.equal(h.sessionCount(), 0);
+});
+
+test("local parsing has an independent module entrypoint and offline API is clearly disabled", async () => {
+  const moduleBlocks = [...html.matchAll(/<script type="module">([\s\S]*?)<\/script>/g)].map((match) => match[1]);
+  const documentBlock = moduleBlocks.find((block) => block.includes('from "./documents/client.mjs"'));
+  assert.ok(documentBlock);
+  assert.ok(!documentBlock.includes('./realtime/session.mjs'));
+  assert.ok(!documentBlock.includes('./public-demo-fixtures.mjs'));
+  const h = harness();
+  h.byId("documentPreview").value = "Synthetic local evidence";
+  h.byId("documentConsent").checked = true;
+  vm.runInContext('window.__gradloopRealtimeConfig = { enabled: false }; updateDocumentSendState();', h.context);
+  assert.equal(h.byId("documentSendButton").disabled, true);
+  assert.match(h.byId("documentConnectionStatus").textContent, /没有接入模型 API/);
+  await h.context.parseDocuments();
+  assert.match(h.byId("documentPreview").value, /Synthetic/);
+  assert.equal(h.sessionCount(), 0);
+});
+
+test("the training overview does not claim every local input invokes a model", () => {
+  assert.ok(!html.includes("每次输入都经过模型理解"));
+  assert.match(html, /本地解析不需要模型 API/);
+  assert.match(html, /模型分析按运行模式启用/);
 });
