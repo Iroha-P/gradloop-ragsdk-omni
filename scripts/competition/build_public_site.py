@@ -42,6 +42,12 @@ def build_public_site(
     shutil.copy2(source_root / "app/ui/assets/gradloop-icon.png", output / "ui-assets/gradloop-icon.png")
     for module in ("protocol.mjs", "session.mjs", "audio.mjs"):
         shutil.copy2(source_root / "app/ui/realtime" / module, output / "realtime" / module)
+    document_root = source_root / "app/ui/documents"
+    (output / "documents/vendor").mkdir(parents=True, exist_ok=True)
+    for module in ("client.mjs", "policy.mjs", "worker.mjs"):
+        shutil.copy2(document_root / module, output / "documents" / module)
+    for asset in ("pdf.mjs", "pdf.worker.mjs", "word.mjs", "THIRD_PARTY_NOTICES.md", "provenance.json"):
+        shutil.copy2(document_root / "vendor" / asset, output / "documents/vendor" / asset)
 
     index = (output / "index.html").read_text(encoding="utf-8")
     index = index.replace(

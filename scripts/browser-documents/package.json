@@ -1,0 +1,16 @@
+{
+  "name": "gradloop-browser-documents",
+  "private": true,
+  "type": "module",
+  "scripts": {"build": "node build.mjs"},
+  "dependencies": {
+    "buffer": "6.0.3",
+    "events": "3.3.0",
+    "mammoth": "1.13.0",
+    "pdfjs-dist": "6.4.299",
+    "process": "0.11.10",
+    "stream-browserify": "3.0.0",
+    "word-extractor": "1.0.4"
+  },
+  "devDependencies": {"esbuild": "0.28.2"}
+}

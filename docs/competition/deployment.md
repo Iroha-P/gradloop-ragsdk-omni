@@ -1,5 +1,9 @@
 # 部署说明（公开 Demo）
 
+一键配置、确认步骤与恢复方式见 [MAP 一键配置说明](one-key-map-setup.md)。
+
+2026-10-04 新增的 [PDF / Word 文档模式](../document-mode.md)尚未发布到 Pages：Wrangler 身份检查 45 秒超时，状态为 `prepared_not_final`。下面的已发布地址仍指向上一版页面，不代表本次功能已上线。
+
 ## 已发布地址
 
 - Pages：<https://gradloop-ragsdk-omni.pages.dev>

@@ -1,6 +1,10 @@
 * text=auto eol=lf
 *.png -text
 
+# Preserve significant Markdown template spaces and original OSS license whitespace.
+app/ui/documents/vendor/word.mjs whitespace=-blank-at-eol
+app/ui/documents/vendor/THIRD_PARTY_NOTICES.md whitespace=-blank-at-eol
+
 # Frozen evaluation evidence is byte-addressed and must not be rewritten by autocrlf.
 data/public_eval/human_grading_v2/** -text
 data/public_eval_boundary_dev_v2/** -text

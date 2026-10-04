@@ -198,6 +198,21 @@ def create_app(
             raise HTTPException(status_code=404, detail="Project icon is not installed")
         return FileResponse(icon, media_type="image/png")
 
+    @application.get("/documents/{asset_path:path}", response_class=FileResponse, include_in_schema=False)
+    def document_parser_asset(asset_path: str) -> FileResponse:
+        allowed = {
+            "client.mjs", "policy.mjs", "worker.mjs", "vendor/pdf.mjs",
+            "vendor/pdf.worker.mjs", "vendor/word.mjs", "vendor/provenance.json",
+            "vendor/THIRD_PARTY_NOTICES.md",
+        }
+        if asset_path not in allowed:
+            raise HTTPException(status_code=404, detail="Document asset is not installed")
+        path = project_root() / "app/ui/documents" / asset_path
+        if not path.is_file():
+            raise HTTPException(status_code=404, detail="Document asset is not installed")
+        media_type = "text/javascript" if path.suffix == ".mjs" else "application/json" if path.suffix == ".json" else "text/plain"
+        return FileResponse(path, media_type=media_type)
+
     @application.get("/health", tags=["system"])
     def health() -> dict:
         return {"status": "ok", "version": __version__, "profile": settings.profile.value}

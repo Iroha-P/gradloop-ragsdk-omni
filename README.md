@@ -1,6 +1,12 @@
+<div align="center">
+
 # GradLoop RAGSDK Omni
 
 > 证据约束的全模态学习与面试训练 Agent
+
+**🏆 星火杯 · 全球总决赛 20 强**
+
+从学习材料到证据、从练习反馈到复盘，让 AI 辅导形成可检查、可恢复的学习闭环。
 
 [![Python](https://img.shields.io/badge/Python-3.11%20%7C%203.12-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
@@ -9,9 +15,15 @@
 [![License](https://img.shields.io/badge/License-Apache--2.0-D22128)](LICENSE)
 [![Privacy](https://img.shields.io/badge/Public%20Release-Privacy%20Scanned-18A058)](docs/release.md)
 
+**[在线体验](https://gradloop-ragsdk-omni.pages.dev)** · **[功能亮点](#项目亮点)** · **[文档处理](#pdf--word-文档模式)** · **[快速开始](#quick-start)** · **[模型实验工程](https://github.com/Iroha-P/gradloop-ragsdk-omni-training)**
+
+</div>
+
 GradLoop 将可引用的 RAG 问答、有界 Agent 工作流、全模态理解和学习闭环组合在同一个可审计系统中。它面向课程学习、技术面试和科研答辩等场景，不只给出答案，还保留证据、记录薄弱项，并在需要改动学习计划时要求用户确认。
 
-本仓库负责应用、API、UI 与学习闭环；[独立 Training 工程](https://github.com/Iroha-P/gradloop-ragsdk-omni-training)负责数据、模型实验和模型服务。项目用途与维护、归档边界见 [项目指南](PROJECT_GUIDE.md)，协作规则见 [AGENTS](AGENTS.md)。私人旧 Coach 仅在本地归档，不属于公开发布内容。
+本仓库是 GradLoop 的**应用工程**：负责用户界面、API、检索、Agent 与学习状态；[Training 工程](https://github.com/Iroha-P/gradloop-ragsdk-omni-training)负责数据、模型实验、评测与推理服务。两仓属于同一项目，通过明确协议协作，而不是重复维护两套产品。
+
+项目参加星火杯并取得**全球总决赛 20 强**成绩。该成绩属于 GradLoop 项目整体，不等同于任一模型评测指标或质量提升结论。
 
 **[Online Demo](https://gradloop-ragsdk-omni.pages.dev)** · **[Architecture](docs/architecture.md)** · **[Reproducibility](docs/release.md)** · **[Demo Guide](docs/demo-script.md)**
 
@@ -23,6 +35,7 @@ GradLoop 将可引用的 RAG 问答、有界 Agent 工作流、全模态理解�
 - **有界 Agent 编排**：LangGraph 与显式 baseline 共用业务工具，限制工具步数和重试次数，对计划调整使用 human-in-the-loop 确认。
 - **学习闭环**：把资料问答、学习计划、练习出题、答案批改、错题记录和重练串成可恢复的状态流程。
 - **全模态扩展**：通过 MiniCPM-o 4.5 边界处理文本、图像、音频和视频帧；应用侧只接受明确确认的公开或合成媒体。
+- **PDF / Word 文档模式**：PDF、DOC、DOCX 在浏览器本地提取正文并预览，用户检查并确认后才可把文本发送至 MAP；不上传原文件或原文件名。
 - **隐私优先发布**：公开包仅包含源码、合成 fixtures、聚合指标和空配置示例；不包含私人语料、凭据、模型权重或原始评分记录。
 
 ## 公开 Demo
@@ -31,12 +44,34 @@ GradLoop 将可引用的 RAG 问答、有界 Agent 工作流、全模态理解�
 | --- | --- | --- |
 | 资料问答 | 公开合成回放 | 回答、引用与检索路径 |
 | 全模态训练台 | MAP MiniCPM-o 4.5 Realtime | 实时文本交互；媒体只接受公开或合成内容 |
+| PDF / Word 文档模式 | 浏览器真实正文提取 + 可选 MAP 文本分析 | 本地解析与云端分析分两步，明确确认后才发送 |
 | 学习计划 | 公开合成回放 | 结构化任务、时长与产出 |
 | 练习批改 | 公开合成回放 | 出题、双评分与弱项归纳 |
 | 错题本 | 公开合成回放 | 错题记录、重练与掌握度更新 |
 | 知识库覆盖 | 公开合成回放 | 来源、章节、候选题与冲突统计 |
 
 > 公开 Demo 不连接私人知识库。五个本地专属模块使用确定性合成回放，全模态训练台通过 Cloudflare Worker 代理访问 MAP，密钥不进入浏览器或仓库。
+
+## PDF / Word 文档模式
+
+文档模式已实现于本仓库并通过合成文件自动测试。2026-10-04 的 Cloudflare 发布因 Wrangler 身份检查超时未完成，现有 Online Demo 尚未更新这一入口；浏览器实测也因运行依赖缺失未完成。
+
+在全模态训练台选择 **“文档模式 · PDF / Word”**：
+
+1. 选择公开或合成 PDF、DOC 或 DOCX，点击 **“解析文档（仅本机）”**。
+2. 查看实际提取的正文、页数或段落数；可在预览中修改文本。
+3. 检查文本为公开或合成内容，再勾选确认，选择是否发送至 MAP 分析。
+4. 结果须对照原文复核。点击 **“清除文档”** 可清除本次浏览器内存内容。
+
+| 格式 | 处理能力 | 明确限制 |
+| --- | --- | --- |
+| PDF | 提取文字层并保留页码标记 | 最多 50 页；扫描件需先 OCR，不自动识别图片或还原排版 |
+| DOCX | 提取 Word 正文文字 | 不执行宏、嵌入对象或外部链接；不还原复杂排版 |
+| DOC | 解析 OLE 格式旧版 Word 正文 | 损坏、加密或其他伪装成 `.doc` 的格式须先转换 |
+
+最多 4 份文件，每份 ≤ 10 MB、合计 ≤ 20 MB，合并正文 ≤ 12,000 字符。超限不静默截断。解析器与许可证随站点托管，不把文档发送给第三方 CDN。文档文本分析不等于已将资料加入 RAG 知识库。
+
+详见 [文档模式与安全边界](docs/document-mode.md)。
 
 ## 系统架构
 
@@ -92,7 +127,7 @@ docker compose --profile cpu up --build
 | 应用 E2E | LangGraph + MiniCPM-o Ascend 公开图文请求通过 | 请求级保留，不写入输入内容 |
 | 人工双评 | 2 名评分者、30 条五维评分；QWK `0.5645`，Pearson `0.7331` | 衡量量表一致性，不宣称模型质量提升 |
 
-详细报告位于 [`reports/public/`](reports/public/)，其中 [MiniCPM-o 历史证据](reports/public/competition/minicpmo-live-evidence-2026-08-27.json)和 [人工双评 v3 状态](reports/public/human_grading_annotation_status_v3.json)对应版本化记录。公开合成评测不代表真实用户准确率，可观测指标也不代替语义评审；本次代码发布不重新执行 NPU、媒体设备或在线端点验收。
+详细报告位于 [`reports/public/`](reports/public/)。公开合成评测不代表真实用户准确率，可观测指标也不代替语义评审。
 
 ## 目录导航
 
@@ -120,6 +155,8 @@ tests/               单元、集成、隐私与发布契约测试
 - [发布与可复现指南](docs/release.md)
 - [MiniCPM-o 全模态集成](docs/minicpmo-integration.md)
 - [MAP Realtime 部署](docs/competition/deployment.md)
+- [MAP 一键配置与部署](docs/competition/one-key-map-setup.md)
+- [PDF / Word 文档模式](docs/document-mode.md)
 - [2–4 分钟演示脚本](docs/demo-script.md)
 - [故障排查](docs/troubleshooting.md)
 - [开源许可](LICENSE)
@@ -127,6 +164,6 @@ tests/               单元、集成、隐私与发布契约测试
 
 ## 当前状态
 
-仓库提供 CPU baseline、合成演示 fixtures、发布扫描与组合评测的复现入口。在线 Demo 的当前可用性须以实时验收为准，历史证据不代表当前服务状态。RAGSDK 完整 runtime 需在满足 Linux、Milvus 和模型服务依赖的环境中单独配置；系统不会把 baseline 结果宣称为 RAGSDK 实测结果。
+公开 Demo、CPU baseline、发布扫描和公开聚合评测均可复现。RAGSDK 完整 runtime 需在满足 Linux、Milvus 和模型服务依赖的环境中单独配置；系统不会把 baseline 结果宣称为 RAGSDK 实测结果。
 
 Apache-2.0 licensed. See [NOTICE](NOTICE) for attribution and external dependency boundaries.

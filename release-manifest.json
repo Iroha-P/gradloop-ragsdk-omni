@@ -58,7 +58,20 @@
     "docs/architecture.md",
     "docs/grading-evaluation.md",
     "reports/public/human_grading_annotation_status_v3.json",
-    "reports/public/competition/minicpmo-live-evidence-2026-08-27.json"
+    "reports/public/competition/minicpmo-live-evidence-2026-08-27.json",
+    "docs/document-mode.md",
+    "tests/competition/test_browser_document_mode.py",
+    "tests/competition/test_public_site_builder.py",
+    "scripts/browser-documents/package.json",
+    "scripts/browser-documents/package-lock.json",
+    "scripts/browser-documents/build.mjs",
+    "scripts/browser-documents/word-entry.mjs",
+    "scripts/browser-documents/globals.mjs",
+    "tests/documents/policy.test.mjs",
+    "tests/documents/parser.test.mjs",
+    "tests/documents/test_vendor_release_gate.py",
+    "tests/integration/test_omni_api.py",
+    "tests/documents/ui-flow.test.mjs"
   ],
   "exclude": [
     ".superpowers",
@@ -74,7 +87,8 @@
     "docs/superpowers",
     "tests/integration/test_boundary_gate_documentation.py",
     "交接说明.md",
-    "开发总提示词.md"
+    "开发总提示词.md",
+    "node_modules"
   ],
   "rename": {
     "README.public.md": "README.md"

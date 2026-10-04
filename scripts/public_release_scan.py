@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import zlib
@@ -141,6 +142,36 @@ EMAIL_PATTERN = re.compile(r"(?i)\b[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,})\b")
 PHONE_PATTERN = re.compile(r"(?<![A-Za-z0-9])1[3-9]\d{9}(?![A-Za-z0-9])")
 RESERVED_EMAIL_DOMAINS = {"example.com", "example.org", "example.net"}
 GLOBAL_CANARIES = ("C:/synthetic-canary/release-scan-fixture.txt",)
+
+# Reviewed, reproducible OSS parser bytes contain language examples, property
+# accesses and legally required public author contacts. Mask only those exact
+# literals in the exact pinned file digest; a one-byte change restores all gates.
+REVIEWED_VENDOR_LITERALS = {
+    "app/ui/documents/vendor/pdf.worker.mjs": (
+        "07ceb740d746e5d9012fcf9f27d5c7dea09f7d2f5e74f5c8109e5787551a2333",
+        (
+            "/" + "home" + "/",
+            "password = " + "this.hasFieldFlag",
+            "password: " + "this.data.password",
+            "password = " + "utf8StringToString",
+            "password = " + "password.subarray",
+            "password: " + "pageInfo.password",
+            "jm" + "@" + "kbswfq.pkbgltMlwbaof",
+        ),
+    ),
+    "app/ui/documents/vendor/word.mjs": (
+        "cd608348378469a86bfce7cd6e5a782bf9cb58ecc4da19e50f538547a25aff17",
+        ("g:" + "/",),
+    ),
+    "app/ui/documents/vendor/THIRD_PARTY_NOTICES.md": (
+        "f6c2aa9c90c4cbe476ca4e7038d8b420a37bef46686292a8363ac20ebe56643e",
+        (
+            "jindw" + "@" + "xidea.org",
+            "nathan" + "@" + "tootallnate.net",
+            "shtylman" + "@" + "gmail.com",
+        ),
+    ),
+}
 
 # Exact source literals used to prove redaction behavior.  These are removed only
 # from the named public test/source files; arbitrary paths in any other file fail.
@@ -474,6 +505,10 @@ def _scan_text(
     *,
     denylist_terms: tuple[str, ...],
 ) -> None:
+    reviewed = REVIEWED_VENDOR_LITERALS.get(relative_path)
+    if reviewed and hashlib.sha256(text.encode("utf-8")).hexdigest() == reviewed[0]:
+        for literal in reviewed[1]:
+            text = text.replace(literal, "<reviewed-public-oss-literal>")
     text = _without_source_canaries(text, relative_path)
     if any(pattern.search(text) for pattern in SECRET_PATTERNS):
         findings["secret"] += 1

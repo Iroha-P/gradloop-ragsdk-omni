@@ -8,7 +8,6 @@ GradLoop RAGSDK Omni 面向课程学习、技术面试与科研答辩，提供�
 | --- | --- |
 | [本应用仓库](https://github.com/Iroha-P/gradloop-ragsdk-omni) | RAG、Agent、学习工具、API、UI、应用评测与公开 Demo |
 | [Training 仓库](https://github.com/Iroha-P/gradloop-ragsdk-omni-training) | 数据准备、模型实验、冻结评测、NPU Base/LoRA 与模型服务 |
-| 私人历史 Coach | 保留旧原型与历史资料，仅供本地回查，不公开 |
 
 应用与训练通过明确的 API 和数据协议连接。各自保留独立评测和版本记录，不复制私人资料或模型权重。
 

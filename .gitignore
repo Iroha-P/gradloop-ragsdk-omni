@@ -105,3 +105,5 @@ checkpoints/
 .vscode/
 .DS_Store
 Thumbs.db
+.browser-document-cache/
+node_modules/

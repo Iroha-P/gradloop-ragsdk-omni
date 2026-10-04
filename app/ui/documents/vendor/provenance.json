@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "dependencies": {
+    "pdfjs-dist": "6.4.299",
+    "mammoth": "1.13.0",
+    "word-extractor": "1.0.4"
+  },
+  "files": {
+    "pdf.mjs": "dd13af821c9c3e1778653340d6539a1ba07bc56cba40073a4c727864cf0c232a",
+    "pdf.worker.mjs": "07ceb740d746e5d9012fcf9f27d5c7dea09f7d2f5e74f5c8109e5787551a2333",
+    "word.mjs": "cd608348378469a86bfce7cd6e5a782bf9cb58ecc4da19e50f538547a25aff17",
+    "THIRD_PARTY_NOTICES.md": "f6c2aa9c90c4cbe476ca4e7038d8b420a37bef46686292a8363ac20ebe56643e"
+  }
+}

@@ -17,8 +17,8 @@ ROOT = Path(__file__).resolve().parents[2]
 CONFIG = ROOT / "deploy" / "map-realtime-worker" / "wrangler.one-key.jsonc"
 SETUP_SCRIPT = ROOT / "scripts" / "competition" / "setup_map_demo.ps1"
 GUIDE = ROOT / "docs" / "competition" / "one-key-map-setup.md"
-PUBLIC_README = ROOT / "README.public.md"
-DEPLOYMENT = ROOT / "DEPLOYMENT.md"
+PUBLIC_README = ROOT / ("README.public.md" if (ROOT / "README.public.md").is_file() else "README.md")
+DEPLOYMENT = ROOT / ("DEPLOYMENT.md" if (ROOT / "DEPLOYMENT.md").is_file() else "docs/competition/deployment.md")
 
 
 def test_committed_defaults_are_public_and_deterministic() -> None:
@@ -194,4 +194,6 @@ def test_beginner_guide_has_one_command_three_actions_and_boundaries() -> None:
 
 def test_public_docs_link_to_one_key_guide() -> None:
     assert "docs/competition/one-key-map-setup.md" in PUBLIC_README.read_text(encoding="utf-8")
-    assert "docs/competition/one-key-map-setup.md" in DEPLOYMENT.read_text(encoding="utf-8")
+    guide_link = "docs/competition/one-key-map-setup.md" if DEPLOYMENT.parent == ROOT else "one-key-map-setup.md"
+    assert guide_link in DEPLOYMENT.read_text(encoding="utf-8")
+    assert (DEPLOYMENT.parent / guide_link).is_file()
