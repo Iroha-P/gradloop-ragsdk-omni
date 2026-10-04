@@ -253,7 +253,7 @@ def test_release_documentation_commands_reference_packaged_scripts() -> None:
     manifest = json.loads((PROJECT_ROOT / "release-manifest.json").read_text(encoding="utf-8"))
     packaged = set(manifest["include"])
     documents = [
-        PROJECT_ROOT / "README.public.md",
+        PROJECT_ROOT / ("README.public.md" if (PROJECT_ROOT / "README.public.md").is_file() else "README.md"),
         PROJECT_ROOT / "docs" / "release.md",
         PROJECT_ROOT / "docs" / "demo-script.md",
         PROJECT_ROOT / "docs" / "troubleshooting.md",

@@ -1,0 +1,69 @@
+{
+  "schema_version": "innovation-evidence.v1",
+  "evidence": {
+    "demo_asset_contract": {
+      "claim": "公开合成图像和音频资产可重复生成并通过隐私 canary",
+      "status": "completed",
+      "source": "tests/competition/test_demo_assets.py",
+      "commit": "21a914d",
+      "value": "fixture_consistency",
+      "runtime": "local_cpu"
+    },
+    "offline_learning_loop": {
+      "claim": "fixture 模式返回模型理解、证据、教练反馈和下一步行动",
+      "status": "completed",
+      "source": "tests/competition/test_innovation_demo_flow.py",
+      "commit": "8500cc3",
+      "value": "fixture_contract",
+      "runtime": "local_cpu"
+    },
+    "live_minicpmo_model_baselines": {
+      "claim": "MiniCPM-o 在昇腾 NPU 上完成图文、音频、图音联合和视频帧四类真实推理",
+      "status": "completed",
+      "source": "reports/public/competition/minicpmo-live-evidence-2026-08-27.json",
+      "commit": null,
+      "value": "4/4 passed",
+      "runtime": "Ascend NPU; torch_npu 2.10.0"
+    },
+    "live_minicpmo_app_e2e": {
+      "claim": "应用 API 到 MiniCPM-o 的真实全模态端到端链路",
+      "status": "completed",
+      "source": "reports/public/competition/minicpmo-live-evidence-2026-08-27.json",
+      "commit": null,
+      "value": "HTTP 200; backend_mode=live; 5 evidence items; unsafe policy rejected",
+      "runtime": "Ascend NPU; GradLoop API -> MiniCPM-o loopback service"
+    },
+    "live_minicpmo_service_contract": {
+      "claim": "MiniCPM-o 回环 HTTP 服务健康检查及图像、音频、图音联合请求",
+      "status": "completed",
+      "source": "reports/public/competition/minicpmo-live-evidence-2026-08-27.json",
+      "commit": null,
+      "value": "health ready; 3/3 requests passed",
+      "runtime": "Ascend NPU loopback service"
+    },
+    "live_runtime_metrics": {
+      "claim": "昇腾环境中的模型加载时间、推理延迟和峰值显存聚合指标",
+      "status": "completed",
+      "source": "reports/public/competition/minicpmo-live-evidence-2026-08-27.json",
+      "commit": null,
+      "value": "latency 2.024-3.385s; peak 16559.9-18099.7 MiB",
+      "runtime": "Ascend NPU live model inference"
+    },
+    "live_map_realtime_smoke": {
+      "claim": "公开 MAP Worker 的实时链路可用性以脱敏时序报告记录",
+      "status": "completed",
+      "source": "reports/local/competition/map-realtime-chat.json",
+      "commit": null,
+      "value": "chat passed; content not persisted",
+      "runtime": "Cloudflare Worker -> MAP Realtime"
+    },
+    "one_key_setup_local_verification": {
+      "claim": "一键 MAP 配置向导的本地安全门、构建和发布白名单验证",
+      "status": "completed",
+      "source": "reports/public/competition/one-key-setup-local-verification.json",
+      "commit": "fe25bd2",
+      "value": "local checks passed; external deployment not run",
+      "runtime": "local Windows verification"
+    }
+  }
+}

@@ -9,6 +9,10 @@
     "LICENSE",
     "NOTICE",
     "README.public.md",
+    "PROJECT_GUIDE.md",
+    "PROJECT_DESCRIPTION.md",
+    "docs/competition/evidence-ledger.json",
+    "AGENTS.md",
     "compose.yaml",
     "pyproject.toml",
     "release-manifest.json",
@@ -50,7 +54,11 @@
     "docs/competition/project-description.md",
     "docs/competition/deployment.md",
     "docs/competition/submission-fields-2026-08-29.md",
-    "tests/competition/test_one_key_map_setup.py"
+    "tests/competition/test_one_key_map_setup.py",
+    "docs/architecture.md",
+    "docs/grading-evaluation.md",
+    "reports/public/human_grading_annotation_status_v3.json",
+    "reports/public/competition/minicpmo-live-evidence-2026-08-27.json"
   ],
   "exclude": [
     ".superpowers",

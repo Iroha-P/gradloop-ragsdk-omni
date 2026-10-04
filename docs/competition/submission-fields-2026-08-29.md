@@ -24,5 +24,5 @@ https://github.com/Iroha-P/gradloop-ragsdk-omni
 - 音频/视频浏览器验收：not_run，提交时不要写成通过。
 - 页面工程与 Worker 变量模板可复现；长期 MAP 凭据由参赛者在受控 Secret 存储中自行配置。
 - 本地 v3 演示视频已验收；视频链接需由参赛者上传后替换。
-- v3 PPTX 已生成；PDF 导出为 `pdf_export_blocked`，不得用旧 PDF 冒充新版。
+- v3 PPTX 与同版 PDF 均已生成，并纳入 `innovation-final-v3` 提交包。
 - 2026-08-30 closeout：脱敏候选通过双重扫描后以全新 Git 历史发布；开发仓库 remote 仍为空。

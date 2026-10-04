@@ -1,0 +1,108 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-08-27T04:43:42.246827+00:00",
+  "privacy_scope": "public_model_assets_and_aggregate_metrics_only",
+  "environment": {
+    "architecture": "aarch64",
+    "python": "3.11.15",
+    "torch": "2.10.0+cpu",
+    "torch_npu": "2.10.0",
+    "torchvision": "0.25.0",
+    "transformers": "4.51.0",
+    "npu_smi": "25.5.1",
+    "npu_reported_name": "Ascend910",
+    "visible_npu_devices": 2
+  },
+  "model": {
+    "id": "OpenBMB/MiniCPM-o-4_5",
+    "source": "platform_preloaded_read_only",
+    "platform_metadata": "Revision:master,CreatedAt:1785932402",
+    "config_sha256": "b0c03cf9f0cfc1178ade50e4ba62727ca7a77aa6a6a71eda6668d8f2899e96c1d",
+    "index_sha256": "e578de05a95804bb15237a6fd7c236414e0160cd76751da82c9f7f0d1344596e7"
+  },
+  "runs": {
+    "vision_text": {
+      "status": "passed",
+      "load_seconds": 6.998,
+      "latency_seconds": 2.621,
+      "peak_memory_mib": 17215.8
+    },
+    "audio_text": {
+      "status": "passed",
+      "load_seconds": 6.431,
+      "latency_seconds": 2.024,
+      "peak_memory_mib": 16559.9
+    },
+    "image_audio_text": {
+      "status": "passed",
+      "load_seconds": 7.8,
+      "latency_seconds": 3.385,
+      "peak_memory_mib": 18059.6
+    },
+    "video_frames_text": {
+      "status": "passed",
+      "sampled_frames": 8,
+      "load_seconds": 7.757,
+      "latency_seconds": 2.774,
+      "peak_memory_mib": 18099.7
+    }
+  },
+  "model_service_contract": {
+    "endpoint_scope": "loopback_only",
+    "health_ready": true,
+    "modalities": [
+      "text",
+      "image",
+      "audio",
+      "video"
+    ],
+    "requests": {
+      "image": {
+        "status": "passed",
+        "http_status": 200,
+        "elapsed_seconds": 2.692
+      },
+      "audio": {
+        "status": "passed",
+        "http_status": 200,
+        "elapsed_seconds": 1.882
+      },
+      "image_audio": {
+        "status": "passed",
+        "http_status": 200,
+        "elapsed_seconds": 1.125
+      }
+    }
+  },
+  "application_end_to_end": {
+    "status": "passed",
+    "http_status": 200,
+    "backend_mode": "live",
+    "backend": "minicpmo-ascend",
+    "modalities": [
+      "text",
+      "image"
+    ],
+    "attachment_count": 1,
+    "model_elapsed_ms": 5438.608,
+    "wall_elapsed_ms": 5484,
+    "evidence_count": 5,
+    "agent_engine": "langgraph",
+    "retention": "request_scoped",
+    "content_policy": "public_or_synthetic",
+    "test_asset_scope": "official_public_model_asset_only"
+  },
+  "safety_gate": {
+    "unsafe_policy_http_status": 400,
+    "error_code": "unsafe_input",
+    "request_payload_persisted": false,
+    "status": "passed"
+  },
+  "claims": {
+    "real_npu_inference": true,
+    "model_service_contract_completed": true,
+    "lora_training_completed": false,
+    "end_to_end_app_live_backend_completed": true
+  },
+  "remote_baseline_evidence_sha256": "2f659c45cf0c5fa62fa435bd822abbcc44dbb95bc3e71cdc6b72e26eefd0f283"
+}

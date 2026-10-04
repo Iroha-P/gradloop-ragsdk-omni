@@ -1,0 +1,70 @@
+{
+  "dataset_id": "public-synthetic-anonymized-baoyan-human-grading-v3",
+  "item_count": 30,
+  "items_sha256": "99799eac8d4b7a2578d4a5e66f31be0d5fd63d3899160f66d91320e71e3abb54",
+  "manifest_sha256": "260aed2953341280681a69c281dab87d7947e16c3669ae94f552cc154a2e8f5e",
+  "metrics": {
+    "band_agreement": 0.6,
+    "category_total_mae": {
+      "application_decision": {
+        "item_count": 4,
+        "pair_count": 1,
+        "total_mae": 32.5
+      },
+      "english_expression": {
+        "item_count": 3,
+        "pair_count": 1,
+        "total_mae": 17.0
+      },
+      "pressure_followup": {
+        "item_count": 4,
+        "pair_count": 1,
+        "total_mae": 23.75
+      },
+      "professional_explanation": {
+        "item_count": 8,
+        "pair_count": 1,
+        "total_mae": 18.125
+      },
+      "project_research": {
+        "item_count": 7,
+        "pair_count": 1,
+        "total_mae": 12.714285714285714
+      },
+      "self_intro_story": {
+        "item_count": 4,
+        "pair_count": 1,
+        "total_mae": 17.5
+      }
+    },
+    "cohen_kappa": 0.3181818181818181,
+    "dimension_mae": {
+      "clarity": 4.466666666666667,
+      "coverage": 7.066666666666666,
+      "evidence": 3.566666666666667,
+      "reasoning": 5.466666666666667,
+      "reflection": 3.433333333333333
+    },
+    "item_count": 30,
+    "pair_count": 1,
+    "pearson_correlation": 0.7331319187760372,
+    "privacy": {
+      "aggregate_only": true,
+      "item_level_scores_public": false,
+      "private_source_text_public": false,
+      "rater_names_public": false
+    },
+    "quadratic_weighted_kappa": 0.5644522204497504,
+    "rater_count": 2,
+    "report_version": "anonymized-baoyan-human-grading-agreement-v3",
+    "status": "completed",
+    "total_mae": 19.333333333333332,
+    "within_10_proportion": 0.26666666666666666
+  },
+  "note": "Aggregate agreement from independent human ratings; item text and item-level scores remain private.",
+  "privacy_scan_passed": true,
+  "rater_count": 2,
+  "report_version": "anonymized-baoyan-human-grading-status-v3",
+  "required_rater_count": 2,
+  "status": "completed"
+}
