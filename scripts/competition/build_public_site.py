@@ -13,7 +13,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 def _validate_urls(proxy_url: str, project_url: str) -> None:
     proxy = urlparse(proxy_url)
-    if proxy.scheme != "wss" or not proxy.netloc or proxy.username or proxy.password:
+    if proxy_url and (proxy.scheme != "wss" or not proxy.netloc or proxy.username or proxy.password):
         raise ValueError("proxy_url must be a credential-free wss URL")
     project = urlparse(project_url)
     if project.scheme not in {"https", "http"} or not project.netloc:
@@ -50,6 +50,7 @@ def build_public_site(
         shutil.copy2(document_root / "vendor" / asset, output / "documents/vendor" / asset)
 
     index = (output / "index.html").read_text(encoding="utf-8")
+    index = index.replace('"/ui-assets/', '"./ui-assets/')
     index = index.replace(
         '<script type="module">',
         '<script src="./runtime-config.js"></script>\n  <script type="module">',
@@ -59,7 +60,7 @@ def build_public_site(
     runtime = {
         "deployment_mode": "public_pages",
         "local_backend": {"enabled": False},
-        "realtime": {"enabled": True, "proxy_url": proxy_url, "session_seconds": 300},
+        "realtime": {"enabled": bool(proxy_url), "proxy_url": proxy_url, "session_seconds": 300},
         "project_url": project_url,
         "privacy": {"public_only": True},
     }
@@ -71,7 +72,7 @@ def build_public_site(
     )
     (output / "README.md").write_text(
         "# GradLoop RAGSDK Omni\n\n"
-        "静态 Pages 演示仅展示公开合成案例与受控 MAP 实时入口。完整 Agent/RAG 工作流保留在本地 FastAPI。\n\n"
+        "静态 Pages 演示展示公开合成案例与本机文档提取。完整 Agent/RAG 工作流保留在本地 FastAPI。\n\n"
         f"项目说明：{project_url}\n\n"
         "页面不包含 API Key、个人资料、私有语料或运行日志。实时服务凭据只应配置在代理的 Secret 存储中。\n",
         encoding="utf-8",
@@ -83,7 +84,7 @@ def build_public_site(
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Build the public GradLoop Pages site")
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--proxy-url", required=True)
+    parser.add_argument("--proxy-url", default="", help="Optional public MAP WebSocket proxy")
     parser.add_argument("--project-url", required=True)
     return parser.parse_args(argv)
 

@@ -15,7 +15,7 @@
 [![License](https://img.shields.io/badge/License-Apache--2.0-D22128)](LICENSE)
 [![Privacy](https://img.shields.io/badge/Public%20Release-Privacy%20Scanned-18A058)](docs/release.md)
 
-**[在线体验](https://gradloop-ragsdk-omni.pages.dev)** · **[功能亮点](#项目亮点)** · **[文档处理](#pdf--word-文档模式)** · **[快速开始](#quick-start)** · **[模型实验工程](https://github.com/Iroha-P/gradloop-ragsdk-omni-training)**
+**[在线体验](https://iroha-p.github.io/demo/gradloop/)** · **[功能亮点](#项目亮点)** · **[文档处理](#pdf--word-文档模式)** · **[快速开始](#quick-start)** · **[模型实验工程](https://github.com/Iroha-P/gradloop-ragsdk-omni-training)**
 
 </div>
 
@@ -25,7 +25,7 @@ GradLoop 将可引用的 RAG 问答、有界 Agent 工作流、全模态理解�
 
 项目参加星火杯并取得**全球总决赛 20 强**成绩。该成绩属于 GradLoop 项目整体，不等同于任一模型评测指标或质量提升结论。
 
-**[Online Demo](https://gradloop-ragsdk-omni.pages.dev)** · **[Architecture](docs/architecture.md)** · **[Reproducibility](docs/release.md)** · **[Demo Guide](docs/demo-script.md)**
+**[Online Demo](https://iroha-p.github.io/demo/gradloop/)** · **[Architecture](docs/architecture.md)** · **[Reproducibility](docs/release.md)** · **[Demo Guide](docs/demo-script.md)**
 
 ![GradLoop 公开合成资料问答界面](docs/assets/demo-public-qa.png)
 
@@ -43,20 +43,18 @@ GradLoop 将可引用的 RAG 问答、有界 Agent 工作流、全模态理解�
 | 模块 | 公开页面行为 | 能力边界 |
 | --- | --- | --- |
 | 资料问答 | 公开合成回放 | 回答、引用与检索路径 |
-| 全模态训练台 | MAP 公开文本分析入口；媒体文件分析需本地后端 | 配置不等于推理成功，文字回复与完成事件须同时存在 |
-| PDF / Word 文档模式 | 源码已实现，在线页面待发布 | 浏览器本地提取正文；可选 MAP 文本分析需明确确认 |
+| 全模态训练台 | 文档提取与文本预览 | 媒体文件分析需本地后端 |
+| PDF / Word 文档模式 | 浏览器本地解析 PDF、DOC 与 DOCX | 提取内容留在浏览器内存 |
 | 学习计划 | 公开合成回放 | 结构化任务、时长与产出 |
 | 练习批改 | 公开合成回放 | 出题、双评分与弱项归纳 |
 | 错题本 | 公开合成回放 | 错题记录、重练与掌握度更新 |
 | 知识库覆盖 | 公开合成回放 | 来源、章节、候选题与冲突统计 |
 
-> 公开 Demo 不连接私人知识库。五个本地专属模块使用确定性合成回放，全模态训练台通过 Cloudflare Worker 代理访问 MAP，密钥不进入浏览器或仓库。
+> 公开 Demo 使用确定性合成回放和浏览器本地文档解析。当前演示的 MAP 实时推理入口处于停用状态。
 
 ## PDF / Word 文档模式
 
-文档模式已实现于本仓库并通过合成文件自动测试。2026-10-05 已进一步修复静态页面误调用本地接口、无条件显示 LIVE 和文字会话未发送用户输入的问题；公开页面默认打开文档模式，媒体文件分析明确保留为本地功能。Wrangler 4.76.0 已独立安装并验证版本，但 Cloudflare 身份请求尚未成功；当前在线页面尚未更新，发布状态仍为 `prepared_not_final`。Browser 保存权限校验尚未通过，真实浏览器验收和本轮 MAP 推理结果均未验证。
-
-新版下方 MAP 文字分析入口须输入公开或合成文本并勾选发送确认，待会话就绪后才发送；仅收到完成事件、空回复、连接失败或 45 秒超时均不算推理成功。网页上的“已配置”只表示代理地址存在，不能当作模型可用证据。
+文档模式支持浏览器中提取和预览公开或合成文件。配置受控 MAP 代理的部署可在用户确认后发送文本，并以非空文字和完成事件共同确认结果。
 
 在全模态训练台选择 **“文档模式 · PDF / Word”**：
 
